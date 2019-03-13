@@ -1,4 +1,8 @@
 import { core, flags, SfdxCommand } from '@salesforce/command';
+import * as path from 'path';
+import * as fs from 'fs';
+import { spawn } from 'child_process';
+
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -34,8 +38,46 @@ export default class Run extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async run(): Promise<any> {
+  public async run(): Promise<void> {
     console.log('>>> running lwc-jest');
+
+    /**
+     * x - Check existence of package.json
+     * x - Depending on flags, check for correct script
+     * x - Run in child process if they exist
+     * - Check node_modules if not
+     * - Error handling
+     */
+
+    if (this.flags.debug && this.flags.watch) {
+      throw new core.SfdxError(messages.getMessage('errorInvalidFlags'));
+    }
+
+    // TODO(tbliss): how to handle where command is run? force run from project root? or pass cwd to lwc-jest and if they set own path append that to cwd?
+    const packageJsonPath = path.join(process.cwd(), 'package.json');
+    if (!fs.existsSync(packageJsonPath)) {
+      throw new core.SfdxError(messages.getMessage('errorNoPackageJsonFound'));
+    }
+
+    const packageJson = require(packageJsonPath);
+    const scripts = packageJson.scripts;
+
+    let targetScript = 'test:unit';
+    if (this.flags.debug) {
+      targetScript += ':debug';
+    } else if (this.flags.watch) {
+      targetScript += ':watch';
+    }
+
+    if (scripts[targetScript]) {
+      console.log('>>> found matching script, running: ' + targetScript);
+      spawn('npm', ['run', targetScript], { stdio: "inherit" });
+      // TODO(tbliss): should we return an object like the template?
+      //               or wait for the child process to finish and have the exit code match the run?
+      return;
+    }
+
+
 
 
     // const name = this.flags.name || 'world';

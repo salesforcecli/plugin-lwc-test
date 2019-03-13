@@ -48,7 +48,6 @@ OPTIONS
 
 EXAMPLES
   $ sfdx force:lightning:lwc:test:run
-  
   $ sfdx force:lightning:lwc:test:run -w
 ```
 
