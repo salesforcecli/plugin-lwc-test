@@ -30,35 +30,29 @@ USAGE
 ```
 <!-- usagestop -->
 <!-- commands -->
-* [`sfdx-lwc-test hello:org [FILE]`](#sfdx-lwc-test-helloorg-file)
+* [`sfdx-lwc-test lwc:test:run [PASSTHROUGH]`](#sfdx-lwc-test-lwctestrun-passthrough)
 
-## `sfdx-lwc-test hello:org [FILE]`
+## `sfdx-lwc-test lwc:test:run [PASSTHROUGH]`
 
-Prints a greeting and your org id(s)!
+invoke Lightning web component Jest unit tests
 
 ```
 USAGE
-  $ sfdx-lwc-test hello:org [FILE]
+  $ sfdx-lwc-test lwc:test:run [PASSTHROUGH]
 
 OPTIONS
-  -f, --force                                      example boolean flag
-  -n, --name=name                                  name to print
-  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
-  -v, --targetdevhubusername=targetdevhubusername  username or alias for the dev hub org; overrides default dev hub org
-  --apiversion=apiversion                          override the api version used for api requests made by this command
-  --json                                           format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)   logging level for this command invocation
+  -d, --debug                                     run tests in debug mode
+  -w, --watch                                     run tests in watch mode
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
 
 EXAMPLES
-  $ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-     Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-     My hub org id is: 00Dxx000000001234
+  $ sfdx force:lightning:lwc:test:run
   
-  $ sfdx hello:org --name myname --targetusername myOrg@example.com
-     Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  $ sfdx force:lightning:lwc:test:run -w
 ```
 
-_See code: [src/commands/hello/org.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/hello/org.ts)_
+_See code: [src/commands/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/run.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 # Debugging your plugin

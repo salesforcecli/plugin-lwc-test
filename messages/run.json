@@ -1,0 +1,7 @@
+{
+  "commandDescription": "invoke Lightning web component Jest unit tests",
+  "debugFlagDescription": "run tests in debug mode",
+  "watchFlagDescription": "run tests in watch mode",
+
+  "errorNoOrgResults": "No results found for the organization '%s'."
+}
