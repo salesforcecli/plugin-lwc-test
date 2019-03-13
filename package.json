@@ -2,8 +2,8 @@
   "name": "sfdx-lwc-test",
   "description": "foo",
   "version": "0.0.1",
-  "author": "Trevor @trevor-bliss",
-  "bugs": "https://github.com/trevor-bliss/sfdx-lwc-test/issues",
+  "author": "Trevor Bliss @tbliss",
+  "bugs": "https://git.soma.salesforce.com/tbliss/sfdx-lwc-test/issues",
   "dependencies": {
     "@oclif/command": "1",
     "@oclif/config": "1",
@@ -37,7 +37,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/trevor-bliss/sfdx-lwc-test",
+  "homepage": "https://git.soma.salesforce.com/tbliss/sfdx-lwc-test",
   "keywords": [
     "sfdx-plugin"
   ],
