@@ -2,6 +2,7 @@
   "commandDescription": "invoke Lightning web component Jest unit tests",
   "debugFlagDescription": "run tests in debug mode",
   "watchFlagDescription": "run tests in watch mode",
-  "errorNoPackageJsonFound": "No package.json file found in the project.\nMake sure lwc-jest is installed.\nRun `sfdx force:lightning:lwc:test:install --help` for details",
-  "errorInvalidFlags": "Invalid flags set. Please run with only --debug or --watch, not both."
+  "errorNoPackageJsonFound": "No package.json file found in the project.\nRun from the project root and make verify lwc-jest is installed.\nRun `sfdx force:lightning:lwc:test:install --help` for installation details",
+  "errorInvalidFlags": "Invalid flags set. Please run with only --debug or --watch, not both.",
+  "errorNoExecutableFound": "No lwc-jest executable found. Verify it is properly installed.\nRun `sfdx force:lightning:lwc:test:install --help` for installation details"
 }

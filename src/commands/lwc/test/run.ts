@@ -71,12 +71,28 @@ export default class Run extends SfdxCommand {
 
     if (scripts[targetScript]) {
       console.log('>>> found matching script, running: ' + targetScript);
-      spawn('npm', ['run', targetScript], { stdio: "inherit" });
+      spawn('npm', ['run', targetScript, this.args.passthrough], { stdio: "inherit" });
       // TODO(tbliss): should we return an object like the template?
       //               or wait for the child process to finish and have the exit code match the run?
+      //               maybe spawnSync?
       return;
     }
 
+    // TODO(tbliss): does this work in Windows too?
+    const executablePath = path.join(process.cwd(), 'node_modules', '.bin', 'lwc-jest');
+    if (!fs.existsSync(executablePath)) {
+      throw new core.SfdxError(messages.getMessage('errorNoExecutableFound'));
+    }
+
+    let args = [];
+    if (this.flags.debug) {
+      args.push('--debug');
+    } else if (this.flags.watch) {
+      args.push('--watch');
+    }
+    !!this.args.passthrough && args.push(this.args.passthrough);
+
+    spawn(executablePath, args, { stdio: "inherit", cwd: process.cwd() });
 
 
 
