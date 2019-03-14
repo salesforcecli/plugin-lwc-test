@@ -3,7 +3,6 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { spawn } from 'child_process';
 
-
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
