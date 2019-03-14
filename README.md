@@ -30,7 +30,27 @@ USAGE
 ```
 <!-- usagestop -->
 <!-- commands -->
+* [`sfdx-lwc-test lwc:test:create`](#sfdx-lwc-test-lwctestcreate)
 * [`sfdx-lwc-test lwc:test:run [PASSTHROUGH]`](#sfdx-lwc-test-lwctestrun-passthrough)
+
+## `sfdx-lwc-test lwc:test:create`
+
+create a Lightning web component test with boilerplate code inside a __tests__ directory
+
+```
+USAGE
+  $ sfdx-lwc-test lwc:test:create
+
+OPTIONS
+  -f, --filepath=filepath                         (required) path to Lightning web component js file to create test for
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
+
+EXAMPLE
+  $ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js
+```
+
+_See code: [src/commands/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/create.ts)_
 
 ## `sfdx-lwc-test lwc:test:run [PASSTHROUGH]`
 
