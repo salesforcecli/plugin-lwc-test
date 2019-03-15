@@ -18,12 +18,12 @@ export default class Run extends SfdxCommand {
   ];
 
   protected static flagsConfig = {
-    filepath: flags.string({char: 'f', description: messages.getMessage('filepathFlagDescription'), required: true}),
+    filepath: flags.string({char: 'p', description: messages.getMessage('filepathFlagDescription'), required: true}),
   };
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async run(): Promise<void> {
+  public async run(): Promise<core.AnyJson> {
     const testDirName = '__tests__';
     const filepath = this.flags.filepath;
 
@@ -37,9 +37,6 @@ export default class Run extends SfdxCommand {
 
     const bundlePath = path.dirname(modulePath);
     const testDirPath = path.join(bundlePath, testDirName);
-    if (!fs.existsSync(testDirPath)) {
-      fs.mkdirSync(testDirPath);
-    }
 
     const moduleName = path.basename(modulePath, '.js');
     const testName = `${moduleName}.test.js`;
@@ -71,9 +68,15 @@ describe('${elementName}', () => {
     });
 });`;
 
+    if (!fs.existsSync(testDirPath)) {
+      fs.mkdirSync(testDirPath);
+    }
     fs.writeFileSync(testPath, testSuiteTemplate);
 
-    // TODO(tbliss): what should this return?
-    //               log success message?
+    this.ux.log('Test case successfully created');
+    return {
+      message: 'Test case successfully created',
+      exitCode: 0,
+    }
   }
 }

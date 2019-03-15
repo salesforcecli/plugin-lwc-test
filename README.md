@@ -43,7 +43,7 @@ USAGE
   $ sfdx-lwc-test lwc:test:create
 
 OPTIONS
-  -f, --filepath=filepath                         (required) path to Lightning web component js file to create a test
+  -p, --filepath=filepath                         (required) path to Lightning web component js file to create a test
                                                   for
 
   --json                                          format output as json
