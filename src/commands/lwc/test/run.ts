@@ -60,7 +60,9 @@ export default class Run extends SfdxCommand {
 
     if (scripts[targetScript]) {
       console.log('>>> found matching script, running: ' + targetScript);
-      spawn('npm', ['run', targetScript, this.args.passthrough], { stdio: "inherit" });
+      let args = ['run', targetScript];
+      !!this.args.passthrough && args.push(this.args.passthrough);
+      spawn('npm', args, { stdio: "inherit" });
       // TODO(tbliss): should we return an object like the template?
       //               or wait for the child process to finish and have the exit code match the run?
       //               maybe spawnSync?
@@ -82,5 +84,7 @@ export default class Run extends SfdxCommand {
     !!this.args.passthrough && args.push(this.args.passthrough);
 
     spawn(executablePath, args, { stdio: "inherit", cwd: process.cwd() });
+
+
   }
 }
