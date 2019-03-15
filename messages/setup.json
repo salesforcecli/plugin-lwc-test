@@ -4,5 +4,6 @@
   "errorNpmNotFound": "npm command not found. Verify it is properly installed and try again.",
   "errorNodeVersion": "Node version too low. Version 8.12.0 or higher required. Found version '%s'",
   "errorNoPackageJson": "No package.json found at root of project. Run 'npm init' to create one.",
-  "errorLwcJestInstall": "Error installing @salesforce/lwc-jest: %o"
+  "errorLwcJestInstall": "Error installing @salesforce/lwc-jest: %o",
+  "errorExistingScripts": "Found conflicting test scripts in package.json. Ensure none of the following scripts exist: test:unit, test:unit:debug, test:unit:watch"
 }
