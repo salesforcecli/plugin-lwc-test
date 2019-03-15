@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from '@salesforce/command';
 import * as path from 'path';
 import * as fs from 'fs';
-import { spawnSync, SpawnSyncReturns } from 'child_process';
+import { spawnSync } from 'child_process';
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -36,47 +36,23 @@ export default class Run extends SfdxCommand {
       throw new core.SfdxError(messages.getMessage('errorInvalidFlags'));
     }
 
-    const packageJsonPath = path.join(project.getPath(), 'package.json');
-    if (!fs.existsSync(packageJsonPath)) {
-      throw new core.SfdxError(messages.getMessage('errorNoPackageJsonFound'));
+    const executablePath = process.platform === 'win32' ?
+      path.join(project.getPath(), 'node_modules', '@salesforce', 'lwc-jest', 'bin', 'lwc-jest')
+      : path.join(project.getPath(), 'node_modules', '.bin', 'lwc-jest');
+    if (!fs.existsSync(executablePath)) {
+      // no way to run lwc-jest, we need to bail
+      throw new core.SfdxError(messages.getMessage('errorNoExecutableFound'));
     }
 
-    const packageJson = require(packageJsonPath);
-    const scripts = packageJson.scripts;
-
-    // the setup command adds 'test:unit', 'test:unit:debug', and 'test:unit:watch' scripts to package.json
-    let targetScript = 'test:unit';
+    let args = [];
     if (this.flags.debug) {
-      targetScript += ':debug';
+      args.push('--debug');
     } else if (this.flags.watch) {
-      targetScript += ':watch';
+      args.push('--watch');
     }
+    !!this.args.passthrough && args.push(this.args.passthrough);
 
-    // TODO(tbliss): does it make sense to do package.json script first? or always just do node_modules?
-    let scriptRet: SpawnSyncReturns<Buffer>;
-    if (scripts[targetScript]) {
-      // if package.json script exists, run that
-      let args = ['run', targetScript];
-      !!this.args.passthrough && args.push(this.args.passthrough);
-      scriptRet = spawnSync('npm', args, { stdio: "inherit" });
-    } else {
-      // if no script found, try running executable in node_modules
-      const executablePath = path.join(process.cwd(), 'node_modules', '.bin', 'lwc-jest');
-      if (!fs.existsSync(executablePath)) {
-        // no way to run lwc-jest, we need to bail
-        throw new core.SfdxError(messages.getMessage('errorNoExecutableFound'));
-      }
-
-      let args = [];
-      if (this.flags.debug) {
-        args.push('--debug');
-      } else if (this.flags.watch) {
-        args.push('--watch');
-      }
-      !!this.args.passthrough && args.push(this.args.passthrough);
-
-      scriptRet = spawnSync(executablePath, args, { stdio: "inherit" });
-    }
+    const scriptRet = spawnSync(executablePath, args, { stdio: "inherit" });
 
       this.ux.log('Jest run complete. Exited with status code: ', scriptRet.status);
       return {

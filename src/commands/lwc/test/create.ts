@@ -20,20 +20,12 @@ export default class Run extends SfdxCommand {
   protected static flagsConfig = {
     filepath: flags.string({char: 'f', description: messages.getMessage('filepathFlagDescription'), required: true}),
   };
-
-  // Comment this out if your command does not require an org username
-  // protected static requiresUsername = true;
-
-  // Comment this out if your command does not support a hub org username
-  // protected static supportsDevhubUsername = true;
-
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
   public async run(): Promise<void> {
     const testDirName = '__tests__';
     const filepath = this.flags.filepath;
-    console.log('>>> creating tests for: ', filepath);
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
