@@ -56,7 +56,7 @@ export default class Run extends SfdxCommand {
     if (!scripts) {
       packageJson.scripts = testScripts;
     } else if (scripts["test:unit"] || scripts["test:unit:debug"] || scripts["test:unit:watch"]) {
-      // TODO(tbliss): error here or just log and ignore?
+      // error here because the run command will attempt to run these and we don't want conflicts
       throw new core.SfdxError(messages.getMessage('errorExistingScripts'));
     } else {
       packageJson.scripts = { ...scripts, ...testScripts};
