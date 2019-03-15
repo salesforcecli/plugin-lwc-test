@@ -32,6 +32,7 @@ USAGE
 <!-- commands -->
 * [`sfdx-lwc-test lwc:test:create`](#sfdx-lwc-test-lwctestcreate)
 * [`sfdx-lwc-test lwc:test:run [PASSTHROUGH]`](#sfdx-lwc-test-lwctestrun-passthrough)
+* [`sfdx-lwc-test lwc:test:setup`](#sfdx-lwc-test-lwctestsetup)
 
 ## `sfdx-lwc-test lwc:test:create`
 
@@ -42,8 +43,11 @@ USAGE
   $ sfdx-lwc-test lwc:test:create
 
 OPTIONS
-  -f, --filepath=filepath                         (required) path to Lightning web component js file to create test for
+  -f, --filepath=filepath                         (required) path to Lightning web component js file to create a test
+                                                  for
+
   --json                                          format output as json
+
   --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
 
 EXAMPLE
@@ -72,6 +76,24 @@ EXAMPLES
 ```
 
 _See code: [src/commands/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/run.ts)_
+
+## `sfdx-lwc-test lwc:test:setup`
+
+install Jest unit testing tools for Lightning web components
+
+```
+USAGE
+  $ sfdx-lwc-test lwc:test:setup
+
+OPTIONS
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
+
+EXAMPLE
+  $ sfdx force:lightning:lwc:test:install
+```
+
+_See code: [src/commands/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/setup.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 # Debugging your plugin

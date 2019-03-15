@@ -84,7 +84,5 @@ export default class Run extends SfdxCommand {
     !!this.args.passthrough && args.push(this.args.passthrough);
 
     spawn(executablePath, args, { stdio: "inherit", cwd: process.cwd() });
-
-
   }
 }
