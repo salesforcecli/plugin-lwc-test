@@ -6,6 +6,20 @@ import { spawnSync } from 'child_process';
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages('sfdx-lwc-test', 'setup');
 
+const testScripts = {
+  "test:unit": "lwc-jest",
+  "test:unit:debug": "lwc-jest --debug",
+  "test:unit:watch": "lwc-jest --watch"
+};
+
+const jestConfig = `const { jestConfig } = require('@salesforce/lwc-jest/config');
+module.exports = {
+    ...jestConfig,
+    // add any custom configurations here
+};`;
+
+const forceignoreEntry = '# LWC Jest tests\n**/__tests__/**';
+
 export default class Run extends SfdxCommand {
 
   public static description = messages.getMessage('commandDescription');
@@ -18,14 +32,6 @@ export default class Run extends SfdxCommand {
 
   public async run(): Promise<core.AnyJson> {
     const project = await core.Project.resolve();
-
-    const jestConfig = `const { jestConfig } = require('@salesforce/lwc-jest/config');
-    module.exports = {
-        ...jestConfig,
-        // add any custom configurations here
-    };`;
-
-    const forceignoreEntry = '# LWC Jest tests\n**/__tests__/**';
 
     const nodeVersionRet = spawnSync('node', ['-v']);
     if (nodeVersionRet.error) {
@@ -46,23 +52,17 @@ export default class Run extends SfdxCommand {
       throw new core.SfdxError(messages.getMessage('errorNoPackageJson'));
     }
 
-    const testScripts = {
-      "test:unit": "lwc-jest",
-      "test:unit:debug": "lwc-jest --debug",
-      "test:unit:watch": "lwc-jest --watch"
-    }
     const packageJson = require(packageJsonPath);
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
-    } else if (scripts["test:unit"] || scripts["test:unit:debug"] || scripts["test:unit:watch"]) {
-      // error here because the run command will attempt to run these and we don't want conflicts
-      throw new core.SfdxError(messages.getMessage('errorExistingScripts'));
-    } else {
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), { encoding: 'utf8' });
+    } else if (!scripts["test:unit"] && !scripts["test:unit:debug"] && !scripts["test:unit:watch"]) {
       packageJson.scripts = { ...scripts, ...testScripts};
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), { encoding: 'utf8' });
+    } else {
+      this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
     }
-    // TODO(tbliss): maybe make copy of package.json first to tmp location, replace if something goes wrong...
-    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), { encoding: 'utf8' });
 
     this.ux.log('Installing @salesforce/lwc-jest node package...');
     //const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: "inherit" });
@@ -78,7 +78,7 @@ export default class Run extends SfdxCommand {
       const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
       if (forceignore.indexOf('**/__tests__/**') === -1) {
         this.ux.log('No "**/__tests__/** entry found in .forceignore. Adding now...');
-        fs.appendFileSync(forceignorePath, forceignoreEntry,{ encoding: 'utf8' });
+        fs.appendFileSync(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
       }
     }
 
