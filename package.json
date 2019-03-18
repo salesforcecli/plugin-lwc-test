@@ -9,8 +9,7 @@
     "@oclif/config": "1",
     "@oclif/errors": "1",
     "@salesforce/command": "0.1.6",
-    "tslib": "1",
-    "write-file-atomic": "^2.4.2"
+    "tslib": "1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "1",

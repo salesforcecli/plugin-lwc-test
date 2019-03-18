@@ -2,8 +2,6 @@ import { core, SfdxCommand } from '@salesforce/command';
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawnSync } from 'child_process';
-import { sync as writeFileAtomicSync } from 'write-file-atomic';
-import { getHeapStatistics } from 'v8';
 
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages('sfdx-lwc-test', 'setup');
