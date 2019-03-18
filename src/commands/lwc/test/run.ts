@@ -15,8 +15,8 @@ export default class Run extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-  `$ sfdx force:lightning:lwc:test:run`,
-  `$ sfdx force:lightning:lwc:test:run -w`
+    `$ sfdx force:lightning:lwc:test:run`,
+    `$ sfdx force:lightning:lwc:test:run -w`
   ];
 
   public static args = [{name: 'passthrough'}];
@@ -40,7 +40,6 @@ export default class Run extends SfdxCommand {
       path.join(project.getPath(), 'node_modules', '@salesforce', 'lwc-jest', 'bin', 'lwc-jest')
       : path.join(project.getPath(), 'node_modules', '.bin', 'lwc-jest');
     if (!fs.existsSync(executablePath)) {
-      // no way to run lwc-jest, we need to bail
       throw new core.SfdxError(messages.getMessage('errorNoExecutableFound'));
     }
 
@@ -54,10 +53,10 @@ export default class Run extends SfdxCommand {
 
     const scriptRet = spawnSync(executablePath, args, { stdio: "inherit" });
 
-      this.ux.log('Jest run complete. Exited with status code: ', scriptRet.status);
-      return {
-        message: 'Jest run complete',
-        exitCode: scriptRet.status,
-      };
+    this.ux.log('Test run complete. Exited with status code: ', scriptRet.status);
+    return {
+      message: 'Test run complete',
+      exitCode: scriptRet.status,
+    };
   }
 }

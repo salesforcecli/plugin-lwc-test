@@ -11,12 +11,12 @@ export default class Run extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-  `$ sfdx force:lightning:lwc:test:install`
+    `$ sfdx force:lightning:lwc:test:install`
   ];
 
   protected static requiresProject = true;
 
-  public async run(): Promise<void> {
+  public async run(): Promise<core.AnyJson> {
     const project = await core.Project.resolve();
 
     const jestConfig = `const { jestConfig } = require('@salesforce/lwc-jest/config');
@@ -89,9 +89,15 @@ export default class Run extends SfdxCommand {
     } else if (fs.existsSync(jestConfigPath)) {
       this.ux.log('Jest configuration found in jest.config.js. Skipping creation of new config file.');
     } else {
-      // no existing Jest config present in workspace
+      // no known existing Jest config present in workspace
       this.ux.log('Creating jest.config.js configuration file in the project root...');
       fs.writeFileSync(jestConfigPath, jestConfig);
     }
+
+    this.ux.log('Test setup complete');
+    return {
+      message: 'Test setup complete',
+      exitCode: 0,
+    };
   }
 }
