@@ -2,6 +2,7 @@ import { core, SfdxCommand } from '@salesforce/command';
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawnSync } from 'child_process';
+import * as signalExit from 'signal-exit';
 
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages('sfdx-lwc-test', 'setup');
@@ -56,7 +57,27 @@ export default class Run extends SfdxCommand {
     });
   }
 
+  private fileCleanup(): Function {
+    return () => {
+      // replace original files with temp backups
+      Object.keys(this.tmpFilelist).forEach(item => {
+        fs.copyFileSync(this.tmpFilelist[item], item);
+      });
+
+      this.removeTempFiles();
+    }
+  }
+
+  private removeTempFiles() {
+    // remove temp files
+    Object.keys(this.tmpFilelist).forEach(item => {
+      fs.unlinkSync(this.tmpFilelist[item]);
+    });
+  }
+
   private writeFiles(): void {
+    const cleanup = this.fileCleanup();
+    const removeExitHandler = signalExit(cleanup);
     try {
       this.writeQueue.forEach(item => {
         const tmpFilename = 'tmp-' + path.basename(item.filepath);
@@ -66,22 +87,15 @@ export default class Run extends SfdxCommand {
         }
         fs.writeFileSync(item.filepath, item.content, item.options);
       });
+      // things worked fine so remove handler
+      removeExitHandler();
+      this.removeTempFiles();
     } catch (e) {
-      // TODO(tbliss): replace this block with signal-exit
       this.ux.log('Error writing files. Attempting to revert back to original state.');
       this.ux.log(e);
-
-      // replace original files with temp ones
-      Object.keys(this.tmpFilelist).forEach(item => {
-        fs.copyFileSync(this.tmpFilelist[item], item);
-      });
-    } finally {
-      // delete temp files
-      Object.keys(this.tmpFilelist).forEach(item => {
-        fs.unlinkSync(this.tmpFilelist[item]);
-      });
+      removeExitHandler();
+      cleanup();
     }
-
   }
 
   public async run(): Promise<core.AnyJson> {
