@@ -56,10 +56,10 @@ export default class Run extends SfdxCommand {
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
-      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), { encoding: 'utf8' });
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts["test:unit"] && !scripts["test:unit:debug"] && !scripts["test:unit:watch"]) {
       packageJson.scripts = { ...scripts, ...testScripts};
-      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), { encoding: 'utf8' });
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
       this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
     }
