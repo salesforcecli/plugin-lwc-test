@@ -2,6 +2,8 @@ import { core, SfdxCommand } from '@salesforce/command';
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawnSync } from 'child_process';
+import { sync as writeFileAtomicSync } from 'write-file-atomic';
+import { getHeapStatistics } from 'v8';
 
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages('sfdx-lwc-test', 'setup');
@@ -30,6 +32,60 @@ export default class Run extends SfdxCommand {
 
   protected static requiresProject = true;
 
+  /*
+   * Queue of files to write.
+   *
+   * A queue is used here so we can do all filesystem
+   * at the end of the command run and attempt to be somewhat atomic. Atomic
+   * here meaning we attempt to revert back all files to their original state
+   * if any errors occur during the writes.
+   */
+  private writeQueue = [];
+
+  /*
+   * An object mapping filenames to their temp copy. We use the temp copy to
+   * save a copy of the original file in case of any errors. If an error does
+   * occur all previous files that were modified are replaced with the
+   * original content saved to the temp file.
+   */
+  private tmpFilelist = {};
+
+  private queueFileWrite(filepath: string, content: string, options?: Object): void {
+    this.writeQueue.push({
+      filepath,
+      content,
+      options,
+    });
+  }
+
+  private writeFiles(): void {
+    try {
+      this.writeQueue.forEach(item => {
+        const tmpFilename = 'tmp-' + path.basename(item.filepath);
+        if (fs.existsSync(item.filepath)) {
+          fs.copyFileSync(item.filepath, tmpFilename);
+          this.tmpFilelist[item.filepath] = tmpFilename;
+        }
+        fs.writeFileSync(item.filepath, item.content, item.options);
+      });
+    } catch (e) {
+      // TODO(tbliss): replace this block with signal-exit
+      this.ux.log('Error writing files. Attempting to revert back to original state.');
+      this.ux.log(e);
+
+      // replace original files with temp ones
+      Object.keys(this.tmpFilelist).forEach(item => {
+        fs.copyFileSync(this.tmpFilelist[item], item);
+      });
+    } finally {
+      // delete temp files
+      Object.keys(this.tmpFilelist).forEach(item => {
+        fs.unlinkSync(this.tmpFilelist[item]);
+      });
+    }
+
+  }
+
   public async run(): Promise<core.AnyJson> {
     const project = await core.Project.resolve();
 
@@ -56,10 +112,12 @@ export default class Run extends SfdxCommand {
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
-      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
+      //fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
+      this.queueFileWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts["test:unit"] && !scripts["test:unit:debug"] && !scripts["test:unit:watch"]) {
       packageJson.scripts = { ...scripts, ...testScripts};
-      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
+      //fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
+      this.queueFileWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
       this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
     }
@@ -70,18 +128,6 @@ export default class Run extends SfdxCommand {
     //   throw new core.SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error]));
     // }
 
-    const forceignorePath = path.join(project.getPath(), '.forceignore');
-    if (!fs.existsSync(forceignorePath)) {
-      this.ux.log('Creating missing .forceignore file found in the project root...');
-      fs.writeFileSync(forceignorePath, forceignoreEntry);
-    } else {
-      const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
-      if (forceignore.indexOf('**/__tests__/**') === -1) {
-        this.ux.log('No "**/__tests__/** entry found in .forceignore. Adding now...');
-        fs.appendFileSync(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
-      }
-    }
-
     const jestConfigPath = path.join(project.getPath(), 'jest.config.js');
     const packageJsonJest = packageJson.jest;
     if (packageJsonJest) {
@@ -91,8 +137,24 @@ export default class Run extends SfdxCommand {
     } else {
       // no known existing Jest config present in workspace
       this.ux.log('Creating jest.config.js configuration file in the project root...');
-      fs.writeFileSync(jestConfigPath, jestConfig);
+      // fs.writeFileSync(jestConfigPath, jestConfig);
+      this.queueFileWrite(jestConfigPath, jestConfig);
     }
+
+    const forceignorePath = path.join(project.getPath(), '.forceignore');
+    if (!fs.existsSync(forceignorePath)) {
+      this.ux.log('Creating missing .forceignore file found in the project root...');
+      //fs.writeFileSync(forceignorePath, forceignoreEntry);
+      this.queueFileWrite(forceignorePath, forceignoreEntry);
+    } else {
+      const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
+      if (forceignore.indexOf('**/__tests__/**') === -1) {
+        this.ux.log('No "**/__tests__/** entry found in .forceignore. Adding now...');
+        fs.appendFileSync(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
+      }
+    }
+
+    this.writeFiles();
 
     this.ux.log('Test setup complete');
     return {
