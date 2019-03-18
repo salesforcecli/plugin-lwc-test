@@ -49,6 +49,8 @@ export default class Run extends SfdxCommand {
    */
   private tmpFilelist = {};
 
+  private newFiles = [];
+
   private queueFileWrite(filepath: string, content: string, options?: Object): void {
     this.writeQueue.push({
       filepath,
@@ -64,12 +66,15 @@ export default class Run extends SfdxCommand {
         fs.copyFileSync(this.tmpFilelist[item], item);
       });
 
+      this.newFiles.forEach(file => {
+        fs.unlinkSync(file);
+      });
+
       this.removeTempFiles();
     }
   }
 
   private removeTempFiles() {
-    // remove temp files
     Object.keys(this.tmpFilelist).forEach(item => {
       fs.unlinkSync(this.tmpFilelist[item]);
     });
@@ -80,14 +85,19 @@ export default class Run extends SfdxCommand {
     const removeExitHandler = signalExit(cleanup);
     try {
       this.writeQueue.forEach(item => {
+        if (item.filepath.indexOf('package.json') !== -1) {
+          throw new Error('foo');
+        }
         const tmpFilename = 'tmp-' + path.basename(item.filepath);
         if (fs.existsSync(item.filepath)) {
           fs.copyFileSync(item.filepath, tmpFilename);
           this.tmpFilelist[item.filepath] = tmpFilename;
+        } else {
+          this.newFiles.push(item.filepath);
         }
         fs.writeFileSync(item.filepath, item.content, item.options);
       });
-      // things worked fine so remove handler
+      // things worked fine so remove handler and only remove temp files
       removeExitHandler();
       this.removeTempFiles();
     } catch (e) {
@@ -162,6 +172,7 @@ export default class Run extends SfdxCommand {
       const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
       if (forceignore.indexOf('**/__tests__/**') === -1) {
         this.ux.log('No "**/__tests__/** entry found in .forceignore. Adding now...');
+        // TODO(tbliss): add this to file writing queue for atomicity
         fs.appendFileSync(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
       }
     }
