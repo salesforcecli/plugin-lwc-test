@@ -1,4 +1,5 @@
 import { core, SfdxCommand } from '@salesforce/command';
+import * as crypto from 'crypto';
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawnSync } from 'child_process';
@@ -59,7 +60,7 @@ export default class Run extends SfdxCommand {
     });
   }
 
-  private fileCleanup(): Function {
+  private revertChanges(): Function {
     return () => {
       // replace original files with temp backups
       Object.keys(this.tmpFilelist).forEach(item => {
@@ -80,15 +81,24 @@ export default class Run extends SfdxCommand {
     });
   }
 
+  private getHash(filename: string): string {
+    return crypto
+      .createHash('md5')
+      .update(filename, 'utf8')
+      .update(String(process.pid), 'utf8')
+      .digest('hex');
+  }
+
   private writeFiles(): void {
-    const cleanup = this.fileCleanup();
+    const cleanup = this.revertChanges();
     const removeExitHandler = signalExit(cleanup);
     try {
       this.writeQueue.forEach(item => {
-        if (item.filepath.indexOf('package.json') !== -1) {
-          throw new Error('foo');
-        }
-        const tmpFilename = 'tmp-' + path.basename(item.filepath);
+        // if (item.filepath.indexOf('package.json') !== -1) {
+        //   throw new Error('foo');
+        // }
+        //const tmpFilename = path.basename(item.filepath) + '.' + this.getHash(item.filepath);
+        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
         if (fs.existsSync(item.filepath)) {
           fs.copyFileSync(item.filepath, tmpFilename);
           this.tmpFilelist[item.filepath] = tmpFilename;
@@ -134,11 +144,9 @@ export default class Run extends SfdxCommand {
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
-      //fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
       this.queueFileWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts["test:unit"] && !scripts["test:unit:debug"] && !scripts["test:unit:watch"]) {
       packageJson.scripts = { ...scripts, ...testScripts};
-      //fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
       this.queueFileWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
       this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
