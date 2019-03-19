@@ -62,6 +62,7 @@ export default class Run extends SfdxCommand {
 
   private revertChanges(): Function {
     return () => {
+      this.ux.log('>>> revertChanges');
       // replace original files with temp backups
       Object.keys(this.tmpFilelist).forEach(item => {
         fs.copyFileSync(this.tmpFilelist[item], item);
@@ -76,6 +77,7 @@ export default class Run extends SfdxCommand {
   }
 
   private removeTempFiles() {
+    this.ux.log('>>> removeTempFiles');
     Object.keys(this.tmpFilelist).forEach(item => {
       fs.unlinkSync(this.tmpFilelist[item]);
     });
@@ -94,10 +96,12 @@ export default class Run extends SfdxCommand {
     const removeExitHandler = signalExit(cleanup);
     try {
       this.writeQueue.forEach(item => {
-        // if (item.filepath.indexOf('package.json') !== -1) {
-        //   throw new Error('foo');
-        // }
-        //const tmpFilename = path.basename(item.filepath) + '.' + this.getHash(item.filepath);
+        if (item.filepath.indexOf('jest.config.js') !== -1) {
+          // throw new Error('foo');
+          // var waitTill = new Date(new Date().getTime() + 10 * 1000);
+          // while(waitTill > new Date()){}
+          //process.exit(101)
+        }
         const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
         if (fs.existsSync(item.filepath)) {
           fs.copyFileSync(item.filepath, tmpFilename);
@@ -153,10 +157,10 @@ export default class Run extends SfdxCommand {
     }
 
     this.ux.log('Installing @salesforce/lwc-jest node package...');
-    //const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: "inherit" });
-    // if (lwcJestInstallRet.error) {
-    //   throw new core.SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error]));
-    // }
+    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: "inherit" });
+    if (lwcJestInstallRet.error) {
+      throw new core.SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error]));
+    }
 
     const jestConfigPath = path.join(project.getPath(), 'jest.config.js');
     const packageJsonJest = packageJson.jest;
