@@ -19,7 +19,7 @@ module.exports = {
     // add any custom configurations here
 };`;
 
-const forceignoreEntry = '# LWC Jest tests\n**/__tests__/**';
+const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 
 export default class Run extends SfdxCommand {
 
@@ -58,19 +58,15 @@ export default class Run extends SfdxCommand {
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
+      this.ux.log('Queueing addition of test scripts to package.json...');
       fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts["test:unit"] && !scripts["test:unit:debug"] && !scripts["test:unit:watch"]) {
+      this.ux.log('Queueing addition of test scripts to package.json...');
       packageJson.scripts = { ...scripts, ...testScripts};
       fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
       this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
     }
-
-    this.ux.log('Installing @salesforce/lwc-jest node package...');
-    // const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: "inherit" });
-    // if (lwcJestInstallRet.error) {
-    //   throw new core.SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error]));
-    // }
 
     const jestConfigPath = path.join(project.getPath(), 'jest.config.js');
     const packageJsonJest = packageJson.jest;
@@ -80,26 +76,32 @@ export default class Run extends SfdxCommand {
       this.ux.log('Jest configuration found in jest.config.js. Skipping creation of new config file.');
     } else {
       // no known existing Jest config present in workspace
-      this.ux.log('Creating jest.config.js configuration file in the project root...');
+      this.ux.log('Queueing creation of jest.config.js file in project root...');
       fileWriter.queueWrite(jestConfigPath, jestConfig);
     }
 
     const forceignorePath = path.join(project.getPath(), '.forceignore');
     if (!fs.existsSync(forceignorePath)) {
-      this.ux.log('Creating missing .forceignore file found in the project root...');
-      //fs.writeFileSync(forceignorePath, forceignoreEntry);
+      this.ux.log('Queueing creation of .forceignore file in project root...');
       fileWriter.queueWrite(forceignorePath, forceignoreEntry);
     } else {
       const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
       if (forceignore.indexOf('**/__tests__/**') === -1) {
-        this.ux.log('No "**/__tests__/** entry found in .forceignore. Adding now...');
-        // TODO(tbliss): add this to file writing queue for atomicity
-        //fs.appendFileSync(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
+        this.ux.log('Queueing modification of .forceignore file in project root...');
         fileWriter.queueAppend(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
       }
     }
 
+    this.ux.log('Making necessary file updates now...');
     fileWriter.writeFiles();
+    this.ux.log('File modifications complete');
+
+    // do this as the last step to
+    this.ux.log('Installing @salesforce/lwc-jest node package...');
+    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: "inherit" });
+    if (lwcJestInstallRet.error) {
+      throw new core.SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error]));
+    }
 
     this.ux.log('Test setup complete');
     return {

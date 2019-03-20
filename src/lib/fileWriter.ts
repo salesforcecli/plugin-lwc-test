@@ -6,25 +6,26 @@ import * as signalExit from 'signal-exit';
 
 export class FileWriter  {
   /*
-   * Queue of files to write.
-   *
-   * A queue is used here so we can do all filesystem
-   * at the end of the command run and attempt to be somewhat atomic. Atomic
-   * here meaning we attempt to revert back all files to their original state
-   * if any errors occur during the writes.
+   * Queue of files to write. May be a new file or replace an existing one.
    */
   private writeQueue = [];
 
+  /*
+   * Queue of files to append data to.
+   */
   private appendQueue = [];
 
   /*
-   * An object mapping filenames to their temp copy. We use the temp copy to
-   * save a copy of the original file in case of any errors. If an error does
-   * occur all previous files that were modified are replaced with the
+   * An object mapping filenames to their temporary copy. We use the temp copy to
+   * save a copy of the original file in case of any unexpected early termination of the run. If an error does
+   * occur, all previous files that were modified are replaced with the
    * original content saved to the temp file.
    */
   private tmpFilelist = {};
 
+  /*
+   * Save references to new files created so that if we need to revert back to our original state we know to remove these.
+   */
   private newFiles = [];
 
   constructor() {}
@@ -89,12 +90,6 @@ export class FileWriter  {
       });
 
       this.writeQueue.forEach(item => {
-        //if (item.filepath.indexOf('jest.config.js') !== -1) {
-          //throw new Error('foo');
-          // var waitTill = new Date(new Date().getTime() + 10 * 1000);
-          // while(waitTill > new Date()){}
-          //process.exit(101)
-        //}
         const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
         if (fs.existsSync(item.filepath)) {
           fs.copyFileSync(item.filepath, tmpFilename);
