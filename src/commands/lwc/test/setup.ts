@@ -1,16 +1,18 @@
-import { core, SfdxCommand } from '@salesforce/command';
-import * as path from 'path';
-import * as fs from 'fs';
+import { SfdxCommand } from '@salesforce/command';
+import { Messages, SfdxError } from '@salesforce/core';
+import { AnyJson } from '@salesforce/ts-types';
 import { spawnSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 import { FileWriter } from '../../../lib/fileWriter';
 
-core.Messages.importMessagesDirectory(__dirname);
-const messages = core.Messages.loadMessages('sfdx-lwc-test', 'setup');
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'setup');
 
 const testScripts = {
-  "test:unit": "lwc-jest",
-  "test:unit:debug": "lwc-jest --debug",
-  "test:unit:watch": "lwc-jest --watch"
+  'test:unit': 'lwc-jest',
+  'test:unit:debug': 'lwc-jest --debug',
+  'test:unit:watch': 'lwc-jest --watch'
 };
 
 const jestConfig = `const { jestConfig } = require('@salesforce/lwc-jest/config');
@@ -26,32 +28,32 @@ export default class Run extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx force:lightning:lwc:test:install`
+    '$ sfdx force:lightning:lwc:test:install'
   ];
 
   protected static requiresProject = true;
 
-  public async run(): Promise<core.AnyJson> {
-    const project = await core.Project.resolve();
+  public async run(): Promise<AnyJson> {
+    const project = this.project;
     const fileWriter = new FileWriter();
 
     const nodeVersionRet = spawnSync('node', ['-v']);
     if (nodeVersionRet.error) {
-      throw new core.SfdxError(messages.getMessage('errorNodeNotFound'));
+      throw new SfdxError(messages.getMessage('errorNodeNotFound'));
     }
     const nodeVersion = nodeVersionRet.stdout.slice(1); // strip the v from v8.12.0
-    if (nodeVersion < "8.12.0") {
-      throw new core.SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
+    if (nodeVersion < '8.12.0') {
+      throw new SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
     }
 
     const npmVersionRet = spawnSync('npm', ['-v']);
     if (npmVersionRet.error) {
-      throw new core.SfdxError(messages.getMessage('errorNpmNotFound'));
+      throw new SfdxError(messages.getMessage('errorNpmNotFound'));
     }
 
     const packageJsonPath = path.join(project.getPath(), 'package.json');
     if (!fs.existsSync(packageJsonPath)) {
-      throw new core.SfdxError(messages.getMessage('errorNoPackageJson'));
+      throw new SfdxError(messages.getMessage('errorNoPackageJson'));
     }
 
     const packageJson = require(packageJsonPath);
@@ -60,7 +62,7 @@ export default class Run extends SfdxCommand {
       packageJson.scripts = testScripts;
       this.ux.log('Queueing addition of test scripts to package.json...');
       fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
-    } else if (!scripts["test:unit"] && !scripts["test:unit:debug"] && !scripts["test:unit:watch"]) {
+    } else if (!scripts['test:unit'] && !scripts['test:unit:debug'] && !scripts['test:unit:watch']) {
       this.ux.log('Queueing addition of test scripts to package.json...');
       packageJson.scripts = { ...scripts, ...testScripts};
       fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
@@ -98,15 +100,15 @@ export default class Run extends SfdxCommand {
 
     // do this as the last step to
     this.ux.log('Installing @salesforce/lwc-jest node package...');
-    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: "inherit" });
+    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
     if (lwcJestInstallRet.error) {
-      throw new core.SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error]));
+      throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
     }
 
     this.ux.log('Test setup complete');
     return {
       message: 'Test setup complete',
-      exitCode: 0,
+      exitCode: 0
     };
   }
 }
