@@ -1,38 +1,39 @@
-import { core, flags, SfdxCommand } from '@salesforce/command';
-import * as path from 'path';
+import { flags, SfdxCommand } from '@salesforce/command';
+import { Messages, SfdxError } from '@salesforce/core';
+import { AnyJson } from '@salesforce/ts-types';
 import * as fs from 'fs';
+import * as path from 'path';
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages('sfdx-lwc-test', 'create');
+const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'create');
 
 export default class Run extends SfdxCommand {
-
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js`,
+    '$ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js'
   ];
 
   protected static flagsConfig = {
-    filepath: flags.string({char: 'p', description: messages.getMessage('filepathFlagDescription'), required: true}),
+    filepath: flags.string({char: 'p', description: messages.getMessage('filepathFlagDescription'), required: true})
   };
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async run(): Promise<core.AnyJson> {
+  public async run(): Promise<AnyJson> {
     const testDirName = '__tests__';
     const filepath = this.flags.filepath;
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
-      throw new core.SfdxError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
+      throw new SfdxError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
     }
     if (!fs.existsSync(modulePath)) {
-      throw new core.SfdxError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
+      throw new SfdxError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
     }
 
     const bundlePath = path.dirname(modulePath);
@@ -42,7 +43,7 @@ export default class Run extends SfdxCommand {
     const testName = `${moduleName}.test.js`;
     const testPath = path.join(testDirPath, testName);
     if (fs.existsSync(testPath)) {
-      throw new core.SfdxError(messages.getMessage('errorFileExists', [testPath]));
+      throw new SfdxError(messages.getMessage('errorFileExists', [testPath]));
     }
 
     const className = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
@@ -76,7 +77,7 @@ describe('${elementName}', () => {
     this.ux.log('Test case successfully created');
     return {
       message: 'Test case successfully created',
-      exitCode: 0,
-    }
+      exitCode: 0
+    };
   }
 }

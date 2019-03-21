@@ -18,29 +18,29 @@ foo
 <!-- install -->
 <!-- usage -->
 ```sh-session
-$ npm install -g sfdx-lwc-test
-$ sfdx-lwc-test COMMAND
+$ npm install -g @salesforce/plugin-lwc-test
+$ @salesforce/plugin-lwc-test COMMAND
 running command...
-$ sfdx-lwc-test (-v|--version|version)
-sfdx-lwc-test/0.0.1 darwin-x64 node-v8.12.0
-$ sfdx-lwc-test --help [COMMAND]
+$ @salesforce/plugin-lwc-test (-v|--version|version)
+@salesforce/plugin-lwc-test/0.0.1 darwin-x64 node-v10.15.1
+$ @salesforce/plugin-lwc-test --help [COMMAND]
 USAGE
-  $ sfdx-lwc-test COMMAND
+  $ @salesforce/plugin-lwc-test COMMAND
 ...
 ```
 <!-- usagestop -->
 <!-- commands -->
-* [`sfdx-lwc-test lwc:test:create`](#sfdx-lwc-test-lwctestcreate)
-* [`sfdx-lwc-test lwc:test:run [PASSTHROUGH]`](#sfdx-lwc-test-lwctestrun-passthrough)
-* [`sfdx-lwc-test lwc:test:setup`](#sfdx-lwc-test-lwctestsetup)
+* [`@salesforce/plugin-lwc-test <%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---p-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`@salesforce/plugin-lwc-test <%= command.id %> [-d | -w] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---d---w---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`@salesforce/plugin-lwc-test <%= command.id %> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid----json---loglevel-tracedebuginfowarnerrorfatal)
 
-## `sfdx-lwc-test lwc:test:create`
+## `@salesforce/plugin-lwc-test <%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 create a Lightning web component test with boilerplate code inside a __tests__ directory
 
 ```
 USAGE
-  $ sfdx-lwc-test lwc:test:create
+  $ @salesforce/plugin-lwc-test lwc:test:create -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -p, --filepath=filepath                         (required) path to Lightning web component js file to create a test
@@ -48,7 +48,7 @@ OPTIONS
 
   --json                                          format output as json
 
-  --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
   $ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js
@@ -56,19 +56,19 @@ EXAMPLE
 
 _See code: [src/commands/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/create.ts)_
 
-## `sfdx-lwc-test lwc:test:run [PASSTHROUGH]`
+## `@salesforce/plugin-lwc-test <%= command.id %> [-d | -w] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 invoke Lightning web component Jest unit tests
 
 ```
 USAGE
-  $ sfdx-lwc-test lwc:test:run [PASSTHROUGH]
+  $ @salesforce/plugin-lwc-test lwc:test:run [-d | -w] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -d, --debug                                     run tests in debug mode
   -w, --watch                                     run tests in watch mode
   --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLES
   $ sfdx force:lightning:lwc:test:run
@@ -77,17 +77,17 @@ EXAMPLES
 
 _See code: [src/commands/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/run.ts)_
 
-## `sfdx-lwc-test lwc:test:setup`
+## `@salesforce/plugin-lwc-test <%= command.id %> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 install Jest unit testing tools for Lightning web components
 
 ```
 USAGE
-  $ sfdx-lwc-test lwc:test:setup
+  $ @salesforce/plugin-lwc-test lwc:test:setup [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  logging level for this command invocation
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
   $ sfdx force:lightning:lwc:test:install

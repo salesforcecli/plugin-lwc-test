@@ -1,7 +1,5 @@
 import * as crypto from 'crypto';
-import * as path from 'path';
 import * as fs from 'fs';
-import { spawnSync } from 'child_process';
 import * as signalExit from 'signal-exit';
 
 export class FileWriter  {
@@ -30,48 +28,19 @@ export class FileWriter  {
 
   constructor() {}
 
-  private revertChanges(): Function {
-    return () => {
-      // replace original files with temp backups
-      Object.keys(this.tmpFilelist).forEach(item => {
-        fs.copyFileSync(this.tmpFilelist[item], item);
-      });
-
-      this.newFiles.forEach(file => {
-        fs.unlinkSync(file);
-      });
-
-      this.removeTempFiles();
-    }
-  }
-
-  private removeTempFiles() {
-    Object.keys(this.tmpFilelist).forEach(item => {
-      fs.unlinkSync(this.tmpFilelist[item]);
-    });
-  }
-
-  private getHash(filename: string): string {
-    return crypto
-      .createHash('md5')
-      .update(filename, 'utf8')
-      .update(String(process.pid), 'utf8')
-      .digest('hex');
-  }
-
-  public queueWrite(filepath: string, content: string, options?: Object): void {
+  public queueWrite(filepath: string, content: string, options?: object): void {
     this.writeQueue.push({
       filepath,
       content,
-      options,
+      options
     });
   }
 
-  public queueAppend(filepath: string, toAppend: string, options?: Object): void {
+  public queueAppend(filepath: string, toAppend: string, options?: object): void {
     this.appendQueue.push({
       filepath,
       toAppend,
-      options,
+      options
     });
   }
 
@@ -109,6 +78,35 @@ export class FileWriter  {
       removeExitHandler();
       cleanup();
     }
+  }
+
+  private revertChanges(): () => void {
+    return () => {
+      // replace original files with temp backups
+      Object.keys(this.tmpFilelist).forEach(item => {
+        fs.copyFileSync(this.tmpFilelist[item], item);
+      });
+
+      this.newFiles.forEach(file => {
+        fs.unlinkSync(file);
+      });
+
+      this.removeTempFiles();
+    };
+  }
+
+  private removeTempFiles() {
+    Object.keys(this.tmpFilelist).forEach(item => {
+      fs.unlinkSync(this.tmpFilelist[item]);
+    });
+  }
+
+  private getHash(filename: string): string {
+    return crypto
+      .createHash('md5')
+      .update(filename, 'utf8')
+      .update(String(process.pid), 'utf8')
+      .digest('hex');
   }
 
 }
