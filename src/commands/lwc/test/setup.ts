@@ -33,13 +33,70 @@ export default class Setup extends SfdxCommand {
 
   protected static requiresProject = true;
 
-  // pull out for testability
+  // pull out to own method for testability
   private getFileWriter(): FileWriter {
     return new FileWriter();
   }
 
+  private getPackageJson(packageJsonPath: string) {
+    return require(packageJsonPath);
+  }
+
+  private updatePackageJsonScripts(fileWriter: FileWriter, packageJsonPath: string): void {
+    //const packageJson = require(packageJsonPath);
+    const packageJson = this.getPackageJson(packageJsonPath);
+    const scripts = packageJson.scripts;
+    if (!scripts) {
+      packageJson.scripts = testScripts;
+      this.ux.log('Queueing addition of test scripts to package.json...');
+      fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
+    } else if (!scripts['test:unit'] && !scripts['test:unit:debug'] && !scripts['test:unit:watch']) {
+      this.ux.log('Queueing addition of test scripts to package.json...');
+      packageJson.scripts = { ...scripts, ...testScripts};
+      fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
+    } else {
+      this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
+    }
+  }
+
+  private addJestConfig(fileWriter: FileWriter, packageJsonPath: string): void {
+    const packageJson = require(packageJsonPath);
+    const jestConfigPath = path.join(this.project.getPath(), 'jest.config.js');
+    const packageJsonJest = packageJson.jest;
+    if (packageJsonJest) {
+      this.ux.log('Jest configuration found in package.json. Skipping creation of jest.config.js file.');
+    } else if (fs.existsSync(jestConfigPath)) {
+      this.ux.log('Jest configuration found in jest.config.js. Skipping creation of new config file.');
+    } else {
+      // no known existing Jest config present in workspace
+      this.ux.log('Queueing creation of jest.config.js file in project root...');
+      fileWriter.queueWrite(jestConfigPath, jestConfig);
+    }
+  }
+
+  private updateForceIgnore(fileWriter: FileWriter): void {
+    const forceignorePath = path.join(this.project.getPath(), '.forceignore');
+    if (!fs.existsSync(forceignorePath)) {
+      this.ux.log('Queueing creation of .forceignore file in project root...');
+      fileWriter.queueWrite(forceignorePath, forceignoreEntry);
+    } else {
+      const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
+      if (forceignore.indexOf('**/__tests__/**') === -1) {
+        this.ux.log('Queueing modification of .forceignore file in project root...');
+        fileWriter.queueAppend(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
+      }
+    }
+  }
+
+  private installLwcJest(): void {
+    this.ux.log('Installing @salesforce/lwc-jest node package...');
+    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
+    if (lwcJestInstallRet.error) {
+      throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
+    }
+  }
+
   public async run(): Promise<AnyJson> {
-    const project = this.project;
     const fileWriter = this.getFileWriter();
 
     const nodeVersionRet = spawnSync('node', ['-v']);
@@ -56,59 +113,21 @@ export default class Setup extends SfdxCommand {
       throw new SfdxError(messages.getMessage('errorNpmNotFound'));
     }
 
-    const packageJsonPath = path.join(project.getPath(), 'package.json');
+    const packageJsonPath = path.join(this.project.getPath(), 'package.json');
     if (!fs.existsSync(packageJsonPath)) {
       throw new SfdxError(messages.getMessage('errorNoPackageJson'));
     }
 
-    const packageJson = require(packageJsonPath);
-    const scripts = packageJson.scripts;
-    if (!scripts) {
-      packageJson.scripts = testScripts;
-      this.ux.log('Queueing addition of test scripts to package.json...');
-      fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
-    } else if (!scripts['test:unit'] && !scripts['test:unit:debug'] && !scripts['test:unit:watch']) {
-      this.ux.log('Queueing addition of test scripts to package.json...');
-      packageJson.scripts = { ...scripts, ...testScripts};
-      fileWriter.queueWrite(packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
-    } else {
-      this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
-    }
-
-    const jestConfigPath = path.join(project.getPath(), 'jest.config.js');
-    const packageJsonJest = packageJson.jest;
-    if (packageJsonJest) {
-      this.ux.log('Jest configuration found in package.json. Skipping creation of jest.config.js file.');
-    } else if (fs.existsSync(jestConfigPath)) {
-      this.ux.log('Jest configuration found in jest.config.js. Skipping creation of new config file.');
-    } else {
-      // no known existing Jest config present in workspace
-      this.ux.log('Queueing creation of jest.config.js file in project root...');
-      fileWriter.queueWrite(jestConfigPath, jestConfig);
-    }
-
-    const forceignorePath = path.join(project.getPath(), '.forceignore');
-    if (!fs.existsSync(forceignorePath)) {
-      this.ux.log('Queueing creation of .forceignore file in project root...');
-      fileWriter.queueWrite(forceignorePath, forceignoreEntry);
-    } else {
-      const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
-      if (forceignore.indexOf('**/__tests__/**') === -1) {
-        this.ux.log('Queueing modification of .forceignore file in project root...');
-        fileWriter.queueAppend(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
-      }
-    }
+    this.updatePackageJsonScripts(fileWriter, packageJsonPath);
+    this.addJestConfig(fileWriter, packageJsonPath);
+    this.updateForceIgnore(fileWriter);
 
     this.ux.log('Making necessary file updates now...');
     fileWriter.writeFiles();
     this.ux.log('File modifications complete');
 
-    // do this as the last step to
-    this.ux.log('Installing @salesforce/lwc-jest node package...');
-    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
-    if (lwcJestInstallRet.error) {
-      throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
-    }
+    // do this as the last step because it is hard to revert if experience an error from anything above
+    this.installLwcJest();
 
     this.ux.log('Test setup complete');
     return {

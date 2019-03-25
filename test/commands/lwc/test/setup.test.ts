@@ -4,6 +4,7 @@ import * as sinon from 'sinon';
 import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
+import Setup from '../../../../src/commands/lwc/test/setup';
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
@@ -81,25 +82,39 @@ describe('lwc:test:create', () => {
   });
 
   describe('package.json', () => {
-    // test
-    // .do(() => {
-    //   stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-    //     if (cmd === 'node') {
-    //       return { status: 0, stdout: 'v8.12.0' };
-    //     }
-    //     if (cmd === 'npm') {
-    //       return { status: 0 };
-    //     }
-    //   });
-    //   stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
-    // })
-    // .stdout()
-    // .stderr()
-    // .withProject()
-    // .command(['lwc:test:setup'])
-    // .it('with no test scripts adds scripts to package.json', ctx => {
-    //   expect(ctx.stderr).to.contain('No package.json found at root of project');
-    // });
+    let fileWriterStub = {
+      queueWrite: sinon.stub(),
+      writeFiles: sinon.stub()
+    };
+
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+        name: 'from test'
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('with no test scripts adds scripts to package.json', ctx => {
+      // first param is the path, just make sure this is the package.json write
+      expect(fileWriterStub.queueWrite.args[0][0]).to.contain('package.json');
+      // second param is the content - verify contains test scripts
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "lwc-jest"');
+    });
 
   });
 
