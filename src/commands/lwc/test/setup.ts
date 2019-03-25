@@ -23,7 +23,7 @@ module.exports = {
 
 const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 
-export default class Run extends SfdxCommand {
+export default class Setup extends SfdxCommand {
 
   public static description = messages.getMessage('commandDescription');
 

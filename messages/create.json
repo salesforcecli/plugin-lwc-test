@@ -3,5 +3,5 @@
   "filepathFlagDescription": "path to Lightning web component js file to create a test for",
   "errorFileNotFound": "File not found: '%s'.",
   "errorFileNotJs": "File must be a JavaScript file. The '.js' extension was not found: '%s'.",
-  "errorFileExists": "Test file alreday exists: '%s'"
+  "errorFileExists": "Test file already exists: '%s'"
 }

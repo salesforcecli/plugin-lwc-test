@@ -11,7 +11,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'create');
 
-export default class Run extends SfdxCommand {
+export default class Create extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [

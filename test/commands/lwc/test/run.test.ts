@@ -1,10 +1,10 @@
-import { expect, test } from '@salesforce/command/lib/test';
-import Run from '../../../../src/commands/lwc/test/run';
-import { testSetup } from '@salesforce/core/lib/testSetup';
-import { stubMethod } from '@salesforce/ts-sinon';
 import * as child_process from 'child_process';
 import * as fs from 'fs';
 import * as sinon from 'sinon';
+import { expect, test } from '@salesforce/command/lib/test';
+import { testSetup } from '@salesforce/core/lib/testSetup';
+import { stubMethod } from '@salesforce/ts-sinon';
+import Run from '../../../../src/commands/lwc/test/run';
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
