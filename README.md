@@ -22,7 +22,7 @@ $ npm install -g @salesforce/plugin-lwc-test
 $ @salesforce/plugin-lwc-test COMMAND
 running command...
 $ @salesforce/plugin-lwc-test (-v|--version|version)
-@salesforce/plugin-lwc-test/0.0.1 darwin-x64 node-v10.15.1
+@salesforce/plugin-lwc-test/0.0.1 darwin-x64 node-v8.12.0
 $ @salesforce/plugin-lwc-test --help [COMMAND]
 USAGE
   $ @salesforce/plugin-lwc-test COMMAND
@@ -31,7 +31,7 @@ USAGE
 <!-- usagestop -->
 <!-- commands -->
 * [`@salesforce/plugin-lwc-test <%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---p-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`@salesforce/plugin-lwc-test <%= command.id %> [-d | -w] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---d---w---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`@salesforce/plugin-lwc-test <%= command.id %> [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---d---watch---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`@salesforce/plugin-lwc-test <%= command.id %> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid----json---loglevel-tracedebuginfowarnerrorfatal)
 
 ## `@salesforce/plugin-lwc-test <%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
@@ -56,19 +56,19 @@ EXAMPLE
 
 _See code: [src/commands/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/create.ts)_
 
-## `@salesforce/plugin-lwc-test <%= command.id %> [-d | -w] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `@salesforce/plugin-lwc-test <%= command.id %> [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 invoke Lightning web component Jest unit tests
 
 ```
 USAGE
-  $ @salesforce/plugin-lwc-test lwc:test:run [-d | -w] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ @salesforce/plugin-lwc-test lwc:test:run [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -d, --debug                                     run tests in debug mode
-  -w, --watch                                     run tests in watch mode
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+  --watch                                         run tests in watch mode
 
 EXAMPLES
   $ sfdx force:lightning:lwc:test:run

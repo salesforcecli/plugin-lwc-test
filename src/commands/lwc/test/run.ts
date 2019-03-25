@@ -27,12 +27,12 @@ export default class Run extends SfdxCommand {
     debug: flags.boolean({
       char: 'd',
       description: messages.getMessage('debugFlagDescription'),
-      exclusive: ['watch']
+      //exclusive: ['watch']
     }),
     watch: flags.boolean({
-      char: 'w',
+      //char: 'w',
       description: messages.getMessage('watchFlagDescription'),
-      exclusive: ['debug']
+      //exclusive: ['debug']
     })
   };
 
@@ -41,6 +41,12 @@ export default class Run extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     const args = [];
+
+    // TODO(tbliss): how to use 'exclusive' setting above?
+    if (this.flags.debug && this.flags.watch) {
+      throw new SfdxError(messages.getMessage('errorInvalidFlags'));
+    }
+
     if (this.flags.debug) {
       args.push('--debug');
     } else if (this.flags.watch) {
@@ -71,10 +77,7 @@ export default class Run extends SfdxCommand {
 
     let executablePath = path.join(projectPath, 'node_modules', nodeModulePath);
     if (!fs.existsSync(executablePath)) {
-      executablePath = path.join(__dirname, '..', '..', '..', '..', 'node_modules', nodeModulePath);
-      if (!fs.existsSync(executablePath)) {
-        throw new SfdxError(messages.getMessage('errorNoExecutableFound'));
-      }
+      throw new SfdxError(messages.getMessage('errorNoExecutableFound'));
     }
     return executablePath;
   }
