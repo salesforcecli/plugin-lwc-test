@@ -9,7 +9,18 @@ import Setup from '../../../../src/commands/lwc/test/setup';
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
 
-describe('lwc:test:create', () => {
+describe('lwc:test:setup', () => {
+  let fileWriterStub = {
+    queueWrite: sinon.stub(),
+    writeFiles: sinon.stub(),
+    queueAppend: sinon.stub()
+  };
+
+  afterEach(() => {
+    fileWriterStub.queueWrite.reset();
+    fileWriterStub.writeFiles.reset();
+    fileWriterStub.queueAppend.reset();
+  });
 
   describe('without proper environment', () => {
     test
@@ -82,11 +93,6 @@ describe('lwc:test:create', () => {
   });
 
   describe('package.json', () => {
-    let fileWriterStub = {
-      queueWrite: sinon.stub(),
-      writeFiles: sinon.stub()
-    };
-
     test
     .do(() => {
       stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
@@ -99,8 +105,9 @@ describe('lwc:test:create', () => {
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      // this stub is key. we have a package.json but no "scripts" section
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
-        name: 'from test'
+        "name": "no test scripts"
       });
       stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
       stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
@@ -116,6 +123,264 @@ describe('lwc:test:create', () => {
       expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "lwc-jest"');
     });
 
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+        "name": "from test",
+        "scripts": {
+          "foo": "bar"
+        }
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('with test scripts, appends scripts to package.json if no conflicts', ctx => {
+      // first param is the path, just make sure this is the package.json write
+      expect(fileWriterStub.queueWrite.args[0][0]).to.contain('package.json');
+      // second param is the content - verify contains test scripts
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "lwc-jest"');
+    });
+
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+        "name": 'from test',
+        "scripts": {
+          "test:unit": "bar"
+        }
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('with test script conflict, does not write to package.json', ctx => {
+      expect(fileWriterStub.queueWrite.called).to.equal(false);
+    });
   });
 
+  describe('jest config', () => {
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+        "name": 'from test',
+        "jest": {
+          "verbose": true
+        }
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('does not write a jest.config.js file if jest config exists in package.json', ctx => {
+      expect(fileWriterStub.queueWrite.called).to.equal(false);
+    });
+
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+        "name": 'from test'
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('does not write a jest.config.js file if jest.config.js file already exists', ctx => {
+      expect(fileWriterStub.queueWrite.called).to.equal(false);
+    });
+
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
+        if (path.indexOf('package.json') !== -1) {
+          return true;
+        }
+        if (path.indexOf('jest.config.js') !== -1) {
+          return false;
+        }
+        return true;
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+        "name": 'from test'
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('write a jest.config.js file if no existing config found', ctx => {
+      expect(fileWriterStub.queueWrite.args[0][0]).to.contain('jest.config.js');
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain("const { jestConfig } = require('@salesforce/lwc-jest/config'");
+    });
+  });
+
+  describe('.forceignore', () => {
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
+        if (path.indexOf('package.json') !== -1) {
+          return true;
+        }
+        if (path.indexOf('forceignore') !== -1) {
+          return false;
+        }
+        return true;
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
+      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('writes new .forceignore file if one does not exist', ctx => {
+      expect(fileWriterStub.queueWrite.args[0][0]).to.contain('.forceignore');
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('**/__tests__/**');
+    });
+
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
+        if (path.indexOf('package.json') !== -1) {
+          return true;
+        }
+        return true;
+      });
+      stubMethod($$.SANDBOX, fs, 'readFileSync').callsFake(path => {
+        if (path.indexOf('forceignore') !== -1) {
+          return "from test";
+        }
+        return "";
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
+      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('appends test entry to existing .forceignore file', ctx => {
+      expect(fileWriterStub.queueAppend.args[0][0]).to.contain('.forceignore');
+      expect(fileWriterStub.queueAppend.args[0][1]).to.contain('**/__tests__/**');
+    });
+
+    test
+    .do(() => {
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 0, stdout: 'v8.12.0' };
+        }
+        if (cmd === 'npm') {
+          return { status: 0 };
+        }
+      });
+      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
+        if (path.indexOf('package.json') !== -1) {
+          return true;
+        }
+        return true;
+      });
+      stubMethod($$.SANDBOX, fs, 'readFileSync').callsFake(path => {
+        if (path.indexOf('forceignore') !== -1) {
+          return "**/__tests__/**";
+        }
+        return "";
+      });
+      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
+      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
+    })
+    .stdout()
+    .withProject()
+    .command(['lwc:test:setup'])
+    .it('does not write to forceignore if test entry already exists', ctx => {
+      expect(fileWriterStub.queueWrite.called).to.equal(false);
+      expect(fileWriterStub.queueAppend.called).to.equal(false);
+    });
+  });
 });

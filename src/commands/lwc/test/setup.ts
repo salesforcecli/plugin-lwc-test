@@ -60,7 +60,7 @@ export default class Setup extends SfdxCommand {
   }
 
   private addJestConfig(fileWriter: FileWriter, packageJsonPath: string): void {
-    const packageJson = require(packageJsonPath);
+    const packageJson = this.getPackageJson(packageJsonPath);
     const jestConfigPath = path.join(this.project.getPath(), 'jest.config.js');
     const packageJsonJest = packageJson.jest;
     if (packageJsonJest) {
