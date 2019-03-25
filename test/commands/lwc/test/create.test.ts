@@ -1,9 +1,7 @@
 import * as fs from 'fs';
-// import * as sinon from 'sinon';
 import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
-// import Create from '../../../../src/commands/lwc/test/create';
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();

@@ -33,12 +33,17 @@ export default class Setup extends SfdxCommand {
 
   protected static requiresProject = true;
 
+  // pull out for testability
+  private getFileWriter(): FileWriter {
+    return new FileWriter();
+  }
+
   public async run(): Promise<AnyJson> {
     const project = this.project;
-    const fileWriter = new FileWriter();
+    const fileWriter = this.getFileWriter();
 
     const nodeVersionRet = spawnSync('node', ['-v']);
-    if (nodeVersionRet.error) {
+    if (nodeVersionRet.error || nodeVersionRet.status !== 0) {
       throw new SfdxError(messages.getMessage('errorNodeNotFound'));
     }
     const nodeVersion = nodeVersionRet.stdout.slice(1); // strip the v from v8.12.0
@@ -47,7 +52,7 @@ export default class Setup extends SfdxCommand {
     }
 
     const npmVersionRet = spawnSync('npm', ['-v']);
-    if (npmVersionRet.error) {
+    if (npmVersionRet.error || npmVersionRet.status !== 0) {
       throw new SfdxError(messages.getMessage('errorNpmNotFound'));
     }
 
