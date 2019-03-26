@@ -1,16 +1,7 @@
-sfdx-lwc-test
+@salesforce/plugin-lwc-test
 =============
 
-foo
-
-[![Version](https://img.shields.io/npm/v/sfdx-lwc-test.svg)](https://npmjs.org/package/sfdx-lwc-test)
-[![CircleCI](https://circleci.com/gh/trevor-bliss/sfdx-lwc-test/tree/master.svg?style=shield)](https://circleci.com/gh/trevor-bliss/sfdx-lwc-test/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/trevor-bliss/sfdx-lwc-test?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfdx-lwc-test/branch/master)
-[![Codecov](https://codecov.io/gh/trevor-bliss/sfdx-lwc-test/branch/master/graph/badge.svg)](https://codecov.io/gh/trevor-bliss/sfdx-lwc-test)
-[![Greenkeeper](https://badges.greenkeeper.io/trevor-bliss/sfdx-lwc-test.svg)](https://greenkeeper.io/)
-[![Known Vulnerabilities](https://snyk.io/test/github/trevor-bliss/sfdx-lwc-test/badge.svg)](https://snyk.io/test/github/trevor-bliss/sfdx-lwc-test)
-[![Downloads/week](https://img.shields.io/npm/dw/sfdx-lwc-test.svg)](https://npmjs.org/package/sfdx-lwc-test)
-[![License](https://img.shields.io/npm/l/sfdx-lwc-test.svg)](https://github.com/trevor-bliss/sfdx-lwc-test/blob/master/package.json)
+Tools for unit testing Lightning web components in a Salesforce DX workspace
 
 <!-- toc -->
 * [Debugging your plugin](#debugging-your-plugin)

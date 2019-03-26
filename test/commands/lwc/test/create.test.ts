@@ -25,7 +25,7 @@ describe('lwc:test:create', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:create', '-p', '/path/to/js/foo.js'])
+    .command(['lwc:test:create', '-f', '/path/to/js/foo.js'])
     .it('outputs completed message on status code 0', ctx => {
       expect(ctx.stdout).to.contain('Test case successfully created');
     });
@@ -45,7 +45,7 @@ describe('lwc:test:create', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:create', '-p', '/path/to/js/foo.js'])
+    .command(['lwc:test:create', '-f', '/path/to/js/foo.js'])
     .it('creates test file in __tests__ folder of component bundle', ctx => {
       expect(writeFileSyncStub.args[0][0]).to.equal('/path/to/js/__tests__/foo.test.js');
     });
@@ -65,7 +65,7 @@ describe('lwc:test:create', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:create', '-p', '/path/to/js/foo.js'])
+    .command(['lwc:test:create', '-f', '/path/to/js/foo.js'])
     .it('created test file has correct import statement', ctx => {
       expect(writeFileSyncStub.args[0][1]).to.contain("import Foo from 'c/foo';");
     });
@@ -85,7 +85,7 @@ describe('lwc:test:create', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:create', '-p', '/path/to/js/fooBar.js'])
+    .command(['lwc:test:create', '-f', '/path/to/js/fooBar.js'])
     .it('created test file has describe block with kebab-case', ctx => {
       expect(writeFileSyncStub.args[0][1]).to.contain("describe('c-foo-bar', () => {");
     });
@@ -101,7 +101,7 @@ describe('lwc:test:create', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:create', '-p', '/path/to/js/foo.js'])
+    .command(['lwc:test:create', '-f', '/path/to/js/foo.js'])
     .it('logs error if file path does not point to existing file', ctx => {
       expect(ctx.stderr).to.contain('File not found');
     });
@@ -120,7 +120,7 @@ describe('lwc:test:create', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:create', '-p', '/path/to/js/foo.js'])
+    .command(['lwc:test:create', '-f', '/path/to/js/foo.js'])
     .it('logs error if test file already exists', ctx => {
       expect(ctx.stderr).to.contain('Test file already exists');
     });

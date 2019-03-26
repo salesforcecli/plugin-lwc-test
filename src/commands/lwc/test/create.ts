@@ -4,11 +4,7 @@ import { AnyJson } from '@salesforce/ts-types';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
-
-// Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
-// or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'create');
 
 export default class Create extends SfdxCommand {
@@ -25,7 +21,7 @@ export default class Create extends SfdxCommand {
       required: true
     })
   };
-  // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
+
   protected static requiresProject = true;
 
   public async run(): Promise<AnyJson> {

@@ -5,11 +5,7 @@ import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
-
-// Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
-// or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'run');
 
 export default class Run extends SfdxCommand {
@@ -26,12 +22,12 @@ export default class Run extends SfdxCommand {
   protected static flagsConfig = {
     debug: flags.boolean({
       char: 'd',
-      description: messages.getMessage('debugFlagDescription'),
-      //exclusive: ['watch']
+      description: messages.getMessage('debugFlagDescription')
+      // exclusive: ['watch']
     }),
     watch: flags.boolean({
-      description: messages.getMessage('watchFlagDescription'),
-      //exclusive: ['debug']
+      description: messages.getMessage('watchFlagDescription')
+      // exclusive: ['debug']
     })
   };
 
@@ -41,7 +37,7 @@ export default class Run extends SfdxCommand {
   public async run(): Promise<AnyJson> {
     const args = [];
 
-    // TODO(tbliss): how to use 'exclusive' setting above?
+    // TODO(tbliss): how to use 'exclusive' setting above? exclusive not a valid prop for boolean flags
     if (this.flags.debug && this.flags.watch) {
       throw new SfdxError(messages.getMessage('errorInvalidFlags'));
     }
@@ -74,7 +70,7 @@ export default class Run extends SfdxCommand {
       path.join('@salesforce', 'lwc-jest', 'bin', 'lwc-jest') :
       path.join('.bin', 'lwc-jest');
 
-    let executablePath = path.join(projectPath, 'node_modules', nodeModulePath);
+    const executablePath = path.join(projectPath, 'node_modules', nodeModulePath);
     if (!fs.existsSync(executablePath)) {
       throw new SfdxError(messages.getMessage('errorNoExecutableFound'));
     }
