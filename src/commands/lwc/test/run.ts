@@ -30,7 +30,6 @@ export default class Run extends SfdxCommand {
       //exclusive: ['watch']
     }),
     watch: flags.boolean({
-      //char: 'w',
       description: messages.getMessage('watchFlagDescription'),
       //exclusive: ['debug']
     })

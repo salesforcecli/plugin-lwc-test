@@ -30,20 +30,20 @@ USAGE
 ```
 <!-- usagestop -->
 <!-- commands -->
-* [`@salesforce/plugin-lwc-test <%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---p-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`@salesforce/plugin-lwc-test <%= command.id %> -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---f-string---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`@salesforce/plugin-lwc-test <%= command.id %> [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---d---watch---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`@salesforce/plugin-lwc-test <%= command.id %> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid----json---loglevel-tracedebuginfowarnerrorfatal)
 
-## `@salesforce/plugin-lwc-test <%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `@salesforce/plugin-lwc-test <%= command.id %> -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 create a Lightning web component test with boilerplate code inside a __tests__ directory
 
 ```
 USAGE
-  $ @salesforce/plugin-lwc-test lwc:test:create -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ @salesforce/plugin-lwc-test lwc:test:create -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
-  -p, --filepath=filepath                         (required) path to Lightning web component js file to create a test
+  -f, --filepath=filepath                         (required) path to Lightning web component js file to create a test
                                                   for
 
   --json                                          format output as json

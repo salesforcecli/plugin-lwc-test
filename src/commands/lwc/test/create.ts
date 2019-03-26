@@ -19,7 +19,11 @@ export default class Create extends SfdxCommand {
   ];
 
   protected static flagsConfig = {
-    filepath: flags.string({char: 'p', description: messages.getMessage('filepathFlagDescription'), required: true})
+    filepath: flags.string({
+      char: 'f',
+      description: messages.getMessage('filepathFlagDescription'),
+      required: true
+    })
   };
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
