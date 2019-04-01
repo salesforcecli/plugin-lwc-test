@@ -34,7 +34,7 @@ USAGE
   $ @salesforce/plugin-lwc-test lwc:test:create -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
-  -f, --filepath=filepath                         (required) path to Lightning web component js file to create a test
+  -f, --filepath=filepath                         (required) path to Lightning web component .js file to create a test
                                                   for
 
   --json                                          format output as json
