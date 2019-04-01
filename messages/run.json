@@ -1,7 +1,11 @@
 {
   "commandDescription": "invoke Lightning web component Jest unit tests",
+  "longDescription": "Invokes Lightning web component Jest unit tests.",
   "debugFlagDescription": "run tests in debug mode",
+  "debugFlagLongDescription": "Runs tests in debug mode.",
   "watchFlagDescription": "run tests in watch mode",
-  "errorNoExecutableFound": "No lwc-jest executable found. Verify it is properly installed.\nRun `sfdx force:lightning:lwc:test:setup --help` for installation details",
-  "errorInvalidFlags": "Invalid flags set. Please run with only --debug or --watch, not both."
+  "watchFlagLongDescription": "Runs tests when a watched file changes. Watched files include the component under test and any files it references.",
+  "errorNoExecutableFound": "No lwc-jest executable found. Verify it is properly installed.\nRun \"sfdx force:lightning:lwc:test:setup --help\" for installation details.",
+  "errorInvalidFlags": "Specify only --debug or --watch, not both.",
+  "successLog": "Test run complete. Exited with status code: %s"
 }

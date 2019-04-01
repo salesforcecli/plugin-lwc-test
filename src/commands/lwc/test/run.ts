@@ -53,7 +53,7 @@ export default class Run extends SfdxCommand {
 
     const scriptRet = this.runJest(args);
 
-    this.ux.log('Test run complete. Exited with status code:', scriptRet.status.toString());
+    this.ux.log(messages.getMessage('', scriptRet.status.toString()));
     return {
       message: 'Test run complete',
       exitCode: scriptRet.status

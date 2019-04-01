@@ -74,9 +74,9 @@ describe('${elementName}', () => {
     }
     fs.writeFileSync(testPath, testSuiteTemplate);
 
-    this.ux.log('Test case successfully created');
+    this.ux.log(messages.getMessage('successLog'));
     return {
-      message: 'Test case successfully created',
+      message: messages.getMessage('successLog'),
       exitCode: 0
     };
   }
