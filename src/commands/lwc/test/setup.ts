@@ -59,16 +59,16 @@ export default class Setup extends SfdxCommand {
     this.addJestConfig(fileWriter);
     this.updateForceIgnore(fileWriter);
 
-    this.ux.log('Making necessary file updates now...');
+    this.ux.log(messages.getMessage('logFileUpdatesStart'));
     fileWriter.writeFiles();
-    this.ux.log('File modifications complete');
+    this.ux.log('logFileUpdatesEnd');
 
     // do this as the last step because it is hard to revert if experience an error from anything above
     this.installLwcJest();
 
-    this.ux.log('Test setup complete');
+    this.ux.log(messages.getMessage('logSuccess'));
     return {
-      message: 'Test setup complete',
+      message: messages.getMessage('logSuccess'),
       exitCode: 0
     };
   }
@@ -91,14 +91,14 @@ export default class Setup extends SfdxCommand {
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
-      this.ux.log('Queueing addition of test scripts to package.json...');
+      this.ux.log(messages.getMessage('logQueueScripts'));
       fileWriter.queueWrite(this.getPackageJsonPath(), JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts['test:unit'] && !scripts['test:unit:debug'] && !scripts['test:unit:watch']) {
-      this.ux.log('Queueing addition of test scripts to package.json...');
+      this.ux.log(messages.getMessage('logQueueScripts'));
       packageJson.scripts = { ...scripts, ...testScripts};
       fileWriter.queueWrite(this.getPackageJsonPath(), JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
-      this.ux.log('One or more of the following package.json scripts already exists, skipping adding of test scripts: "test:unit", "test:unit:debug", "test:unit:watch"');
+      this.ux.log(messages.getMessage('logSkippingScripts'));
     }
   }
 
@@ -107,12 +107,12 @@ export default class Setup extends SfdxCommand {
     const jestConfigPath = path.join(this.project.getPath(), 'jest.config.js');
     const packageJsonJest = packageJson.jest;
     if (packageJsonJest) {
-      this.ux.log('Jest configuration found in package.json. Skipping creation of jest.config.js file.');
+      this.ux.log(messages.getMessage('logConfigInPackageJson'));
     } else if (fs.existsSync(jestConfigPath)) {
-      this.ux.log('Jest configuration found in jest.config.js. Skipping creation of new config file.');
+      this.ux.log(messages.getMessage('logConfigInJestConfigJs'));
     } else {
       // no known existing Jest config present in workspace
-      this.ux.log('Queueing creation of jest.config.js file in project root...');
+      this.ux.log(messages.getMessage('logQueueConfig'));
       fileWriter.queueWrite(jestConfigPath, jestConfig);
     }
   }
@@ -120,12 +120,12 @@ export default class Setup extends SfdxCommand {
   private updateForceIgnore(fileWriter: FileWriter): void {
     const forceignorePath = path.join(this.project.getPath(), '.forceignore');
     if (!fs.existsSync(forceignorePath)) {
-      this.ux.log('Queueing creation of .forceignore file in project root...');
+      this.ux.log(messages.getMessage('logQueueForceignoreAdd'));
       fileWriter.queueWrite(forceignorePath, forceignoreEntry);
     } else {
       const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
       if (forceignore.indexOf('**/__tests__/**') === -1) {
-        this.ux.log('Queueing modification of .forceignore file in project root...');
+        this.ux.log('logQueueForceignoreModify');
         fileWriter.queueAppend(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
       }
     }

@@ -22,11 +22,13 @@ export default class Run extends SfdxCommand {
   protected static flagsConfig = {
     debug: flags.boolean({
       char: 'd',
-      description: messages.getMessage('debugFlagDescription')
+      description: messages.getMessage('debugFlagDescription'),
+      longDescription: messages.getMessage('debugFlagLongDescription')
       // exclusive: ['watch']
     }),
     watch: flags.boolean({
-      description: messages.getMessage('watchFlagDescription')
+      description: messages.getMessage('watchFlagDescription'),
+      longDescription: messages.getMessage('watchFlagLongDescription')
       // exclusive: ['debug']
     })
   };
@@ -53,9 +55,9 @@ export default class Run extends SfdxCommand {
 
     const scriptRet = this.runJest(args);
 
-    this.ux.log(messages.getMessage('successLog', [scriptRet.status.toString()]));
+    this.ux.log(messages.getMessage('logSuccess', [scriptRet.status.toString()]));
     return {
-      message: 'Test run complete',
+      message: messages.getMessage('logSuccess', [scriptRet.status.toString()]),
       exitCode: scriptRet.status
     };
   }

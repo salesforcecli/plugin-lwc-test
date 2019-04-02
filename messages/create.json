@@ -5,5 +5,5 @@
   "errorFileNotFound": "File not found: '%s'.",
   "errorFileNotJs": "File must be a JavaScript file. The '.js' extension was not found: '%s'.",
   "errorFileExists": "Test file already exists: '%s'.",
-  "successLog": "Test case successfully created: %s"
+  "logSuccess": "Test case successfully created: %s"
 }

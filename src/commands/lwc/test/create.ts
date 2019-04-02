@@ -74,9 +74,9 @@ describe('${elementName}', () => {
     }
     fs.writeFileSync(testPath, testSuiteTemplate);
 
-    this.ux.log(messages.getMessage('successLog', [testPath]));
+    this.ux.log(messages.getMessage('logSuccess', [testPath]));
     return {
-      message: messages.getMessage('successLog', [testPath]),
+      message: messages.getMessage('logSuccess', [testPath]),
       exitCode: 0
     };
   }
