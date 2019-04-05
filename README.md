@@ -81,7 +81,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx force:lightning:lwc:test:install
+  $ sfdx force:lightning:lwc:test:setup
 ```
 
 _See code: [src/commands/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/setup.ts)_

@@ -28,7 +28,7 @@ export default class Setup extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    '$ sfdx force:lightning:lwc:test:install'
+    '$ sfdx force:lightning:lwc:test:setup'
   ];
 
   protected static requiresProject = true;
@@ -133,7 +133,7 @@ export default class Setup extends SfdxCommand {
 
   private installLwcJest(): void {
     this.ux.log('Installing @salesforce/lwc-jest node package...');
-    const lwcJestInstallRet = spawnSync('npm', ['add', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
+    const lwcJestInstallRet = spawnSync('npm', ['install', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
     if (lwcJestInstallRet.error) {
       throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
     }
