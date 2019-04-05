@@ -1,6 +1,6 @@
 {
   "commandDescription": "install Jest unit testing tools for Lightning web components",
-  "longDescription": "Installs Jest unit testing tools for Lightning web components.",
+  "longDescription": "Installs Jest unit testing tools for Lightning web components. For more information, see the Lightning Web Components Dev Guide: https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.testing",
   "errorNodeNotFound": "Could not retrieve Node.js version. Verify it is properly installed and try again.",
   "errorNpmNotFound": "npm command not found. Verify npm is properly installed and try again.",
   "errorNodeVersion": "Node.js version too low. Version 8.12.0 or higher required. Found version '%s'",
