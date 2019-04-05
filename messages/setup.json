@@ -7,7 +7,7 @@
   "errorNoPackageJson": "No package.json found at root of project. Run \"npm init\" to create one.",
   "errorLwcJestInstall": "Error installing @salesforce/lwc-jest: %o",
   "logSuccess": "Test setup complete",
-  "logFileUpdatesStart": "Making necessary file updates now...",
+  "logFileUpdatesStart": "Updating files...",
   "logFileUpdatesEnd": "File modifications complete",
   "logQueueScripts": "Queueing addition of test scripts to package.json...",
   "logSkippingScripts": "One or more of the following package.json scripts already exists, skipping adding of test scripts: \"test:unit\", \"test:unit:debug\", \"test:unit:watch\"",
