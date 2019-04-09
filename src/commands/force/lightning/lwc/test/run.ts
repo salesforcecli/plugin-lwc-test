@@ -58,7 +58,7 @@ export default class Run extends SfdxCommand {
     this.ux.log(messages.getMessage('logSuccess', [scriptRet.status.toString()]));
     return {
       message: messages.getMessage('logSuccess', [scriptRet.status.toString()]),
-      exitCode: scriptRet.status
+      jestExitCode: scriptRet.status
     };
   }
 

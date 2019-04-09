@@ -1,0 +1,6 @@
+jobs:
+  - name: publish
+    shouldGenerateSfdxDigitalSignature: 'true'
+    envMap:
+      - 'EMAIL': 'tbliss@salesforce.com'
+  - name: promote

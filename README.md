@@ -4,34 +4,35 @@
 Tools for unit testing Lightning web components in a Salesforce DX workspace
 
 <!-- toc -->
+* [Usage](#usage)
 * [Debugging your plugin](#debugging-your-plugin)
 <!-- tocstop -->
-<!-- install -->
-<!-- usage -->
-```sh-session
-$ npm install -g @salesforce/plugin-lwc-test
-$ @salesforce/plugin-lwc-test COMMAND
-running command...
-$ @salesforce/plugin-lwc-test (-v|--version|version)
-@salesforce/plugin-lwc-test/0.0.1 darwin-x64 node-v8.12.0
-$ @salesforce/plugin-lwc-test --help [COMMAND]
-USAGE
-  $ @salesforce/plugin-lwc-test COMMAND
-...
-```
-<!-- usagestop -->
-<!-- commands -->
-* [`@salesforce/plugin-lwc-test <%= command.id %> -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---f-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`@salesforce/plugin-lwc-test <%= command.id %> [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid---d---watch---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`@salesforce/plugin-lwc-test <%= command.id %> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#salesforceplugin-lwc-test--commandid----json---loglevel-tracedebuginfowarnerrorfatal)
 
-## `@salesforce/plugin-lwc-test <%= command.id %> -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+# Usage
+
+Install as a plugin in the [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli).
+```sh-session
+$ sfdx plugins:install lwc-test
+$ sfdx force:lightning:lwc --help
+```
+
+Or, clone this repository and use the run script.
+```sh-session
+yarn # install dependencies
+./bin/run force:lightning:lwc --help
+```
+<!-- commands -->
+* [`sfdx force:lightning:lwc:test:create -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfdx-forcelightninglwctestcreate--f-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfdx force:lightning:lwc:test:run [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfdx-forcelightninglwctestrun--d---watch---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfdx force:lightning:lwc:test:setup [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfdx-forcelightninglwctestsetup---json---loglevel-tracedebuginfowarnerrorfatal)
+
+## `sfdx force:lightning:lwc:test:create -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 create a Lightning web component test with boilerplate code inside a __tests__ directory
 
 ```
 USAGE
-  $ @salesforce/plugin-lwc-test lwc:test:create -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx force:lightning:lwc:test:create -f <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -f, --filepath=filepath                         (required) path to Lightning web component .js file to create a test
@@ -45,15 +46,15 @@ EXAMPLE
   $ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js
 ```
 
-_See code: [src/commands/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/create.ts)_
+_See code: [src/commands/force/lightning/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.2/src/commands/force/lightning/lwc/test/create.ts)_
 
-## `@salesforce/plugin-lwc-test <%= command.id %> [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfdx force:lightning:lwc:test:run [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 invoke Lightning web component Jest unit tests
 
 ```
 USAGE
-  $ @salesforce/plugin-lwc-test lwc:test:run [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx force:lightning:lwc:test:run [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -d, --debug                                     run tests in debug mode
@@ -66,15 +67,15 @@ EXAMPLES
   $ sfdx force:lightning:lwc:test:run -w
 ```
 
-_See code: [src/commands/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/run.ts)_
+_See code: [src/commands/force/lightning/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.2/src/commands/force/lightning/lwc/test/run.ts)_
 
-## `@salesforce/plugin-lwc-test <%= command.id %> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfdx force:lightning:lwc:test:setup [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
 install Jest unit testing tools for Lightning web components
 
 ```
 USAGE
-  $ @salesforce/plugin-lwc-test lwc:test:setup [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx force:lightning:lwc:test:setup [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   --json                                          format output as json
@@ -84,7 +85,7 @@ EXAMPLE
   $ sfdx force:lightning:lwc:test:setup
 ```
 
-_See code: [src/commands/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.1/src/commands/lwc/test/setup.ts)_
+_See code: [src/commands/force/lightning/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.2/src/commands/force/lightning/lwc/test/setup.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 # Debugging your plugin

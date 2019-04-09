@@ -77,7 +77,9 @@ describe('${elementName}', () => {
     this.ux.log(messages.getMessage('logSuccess', [testPath]));
     return {
       message: messages.getMessage('logSuccess', [testPath]),
-      exitCode: 0
+      testPath,
+      className,
+      elementName
     };
   }
 }

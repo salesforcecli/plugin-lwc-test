@@ -4,7 +4,7 @@ import { AnyJson } from '@salesforce/ts-types';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { FileWriter } from '../../../lib/fileWriter';
+import { FileWriter } from '../../../../../lib/fileWriter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'setup');
@@ -68,8 +68,7 @@ export default class Setup extends SfdxCommand {
 
     this.ux.log(messages.getMessage('logSuccess'));
     return {
-      message: messages.getMessage('logSuccess'),
-      exitCode: 0
+      message: messages.getMessage('logSuccess')
     };
   }
 
