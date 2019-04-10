@@ -11,7 +11,7 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    '$ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js'
+    messages.getMessage('example')
   ];
 
   protected static flagsConfig = {

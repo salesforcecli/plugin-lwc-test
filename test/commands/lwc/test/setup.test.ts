@@ -4,12 +4,12 @@ import * as sinon from 'sinon';
 import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
-import Setup from '../../../../src/commands/lwc/test/setup';
+import Setup from '../../../../src/commands/force/lightning/lwc/test/setup';
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
 
-describe('lwc:test:setup', () => {
+describe('force:lightning:lwc:test:setup', () => {
   let fileWriterStub = {
     queueWrite: sinon.stub(),
     writeFiles: sinon.stub(),
@@ -32,9 +32,9 @@ describe('lwc:test:setup', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('logs error when node returns non-zero exit code', ctx => {
-      expect(ctx.stderr).to.contain('Could not retrieve Node version');
+      expect(ctx.stderr).to.contain('Could not retrieve Node.js version');
     });
 
     test
@@ -48,9 +48,9 @@ describe('lwc:test:setup', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('logs error when node version is too low', ctx => {
-      expect(ctx.stderr).to.contain('Node version too low');
+      expect(ctx.stderr).to.contain('Node.js version too low');
     });
 
     test
@@ -67,7 +67,7 @@ describe('lwc:test:setup', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('logs error when npm returns non-zero exit code', ctx => {
       expect(ctx.stderr).to.contain('npm command not found');
     });
@@ -86,7 +86,7 @@ describe('lwc:test:setup', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('logs error no package.json present', ctx => {
       expect(ctx.stderr).to.contain('No package.json found at root of project');
     });
@@ -115,7 +115,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('with no test scripts adds scripts to package.json', ctx => {
       // first param is the path, just make sure this is the package.json write
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('package.json');
@@ -147,7 +147,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('with test scripts, appends scripts to package.json if no conflicts', ctx => {
       // first param is the path, just make sure this is the package.json write
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('package.json');
@@ -179,7 +179,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('with test script conflict, does not write to package.json', ctx => {
       expect(fileWriterStub.queueWrite.called).to.equal(false);
     });
@@ -210,7 +210,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('does not write a jest.config.js file if jest config exists in package.json', ctx => {
       expect(fileWriterStub.queueWrite.called).to.equal(false);
     });
@@ -236,7 +236,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('does not write a jest.config.js file if jest.config.js file already exists', ctx => {
       expect(fileWriterStub.queueWrite.called).to.equal(false);
     });
@@ -270,7 +270,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('write a jest.config.js file if no existing config found', ctx => {
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('jest.config.js');
       expect(fileWriterStub.queueWrite.args[0][1]).to.contain("const { jestConfig } = require('@salesforce/lwc-jest/config'");
@@ -305,7 +305,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('writes new .forceignore file if one does not exist', ctx => {
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('.forceignore');
       expect(fileWriterStub.queueWrite.args[0][1]).to.contain('**/__tests__/**');
@@ -341,7 +341,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('appends test entry to existing .forceignore file', ctx => {
       expect(fileWriterStub.queueAppend.args[0][0]).to.contain('.forceignore');
       expect(fileWriterStub.queueAppend.args[0][1]).to.contain('**/__tests__/**');
@@ -377,7 +377,7 @@ describe('lwc:test:setup', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:setup'])
+    .command(['force:lightning:lwc:test:setup'])
     .it('does not write to forceignore if test entry already exists', ctx => {
       expect(fileWriterStub.queueWrite.called).to.equal(false);
       expect(fileWriterStub.queueAppend.called).to.equal(false);

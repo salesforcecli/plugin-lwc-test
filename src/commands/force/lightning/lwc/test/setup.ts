@@ -28,7 +28,7 @@ export default class Setup extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    '$ sfdx force:lightning:lwc:test:setup'
+    messages.getMessage('example')
   ];
 
   protected static requiresProject = true;

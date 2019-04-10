@@ -6,7 +6,7 @@ import { stubMethod } from '@salesforce/ts-sinon';
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
 
-describe('lwc:test:create', () => {
+describe('force:lightning:lwc:test:create', () => {
   let writeFileSyncStub;
 
   test

@@ -13,8 +13,8 @@ export default class Run extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    '$ sfdx force:lightning:lwc:test:run',
-    '$ sfdx force:lightning:lwc:test:run -w'
+    messages.getMessage('example1'),
+    messages.getMessage('example2')
   ];
 
   public static args = [{name: 'passthrough'}];

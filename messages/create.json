@@ -1,4 +1,5 @@
 {
+  "example": "$ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js",
   "commandDescription": "create a Lightning web component test with boilerplate code inside a __tests__ directory",
   "longDescription": "Creates a __tests__ directory in the specified directory. Creates a boilerplate yourComponentName.test.js file in the __tests__ directory.",
   "filepathFlagDescription": "path to Lightning web component .js file to create a test for",

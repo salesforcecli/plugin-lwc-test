@@ -4,14 +4,14 @@ import * as sinon from 'sinon';
 import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
-import Run from '../../../../src/commands/lwc/test/run';
+import Run from '../../../../src/commands/force/lightning/lwc/test/run';
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
 
 const successReturn = { status: 0 };
 
-describe('lwc:test:run', () => {
+describe('force:lightning:lwc:test:run', () => {
   let runJestStub;
 
   test
@@ -20,7 +20,7 @@ describe('lwc:test:run', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:run'])
+    .command(['force:lightning:lwc:test:run'])
     .it('outputs completed message on status code 0', ctx => {
       expect(ctx.stdout).to.contain('Test run complete. Exited with status code: 0');
     });
@@ -31,7 +31,7 @@ describe('lwc:test:run', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:run'])
+    .command(['force:lightning:lwc:test:run'])
     .it('outputs completed message on status code 1 (failed tests)', ctx => {
       expect(ctx.stdout).to.contain('Test run complete. Exited with status code: 1');
     });
@@ -42,7 +42,7 @@ describe('lwc:test:run', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:run', '--debug'])
+    .command(['force:lightning:lwc:test:run', '--debug'])
     .it('passes --debug to runJest when debug flag set', ctx => {
       expect(runJestStub.args[0][0]).to.contain('--debug');
     });
@@ -53,7 +53,7 @@ describe('lwc:test:run', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:run', '--watch'])
+    .command(['force:lightning:lwc:test:run', '--watch'])
     .it('passes --watch to runJest when debug flag set', ctx => {
       expect(runJestStub.args[0][0]).to.contain('--watch');
     });
@@ -64,7 +64,7 @@ describe('lwc:test:run', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:run', 'path/to/test'])
+    .command(['force:lightning:lwc:test:run', 'path/to/test'])
     .it('passes extra args to runJest', ctx => {
       expect(runJestStub.args[0][0]).to.contain('path/to/test');
     });
@@ -75,7 +75,7 @@ describe('lwc:test:run', () => {
     })
     .stdout()
     .withProject()
-    .command(['lwc:test:run', '--debug', 'path/to/test'])
+    .command(['force:lightning:lwc:test:run', '--debug', 'path/to/test'])
     .it('passes extra args and debug flag to runJest', ctx => {
       expect(runJestStub.args[0][0]).to.contain('path/to/test');
       expect(runJestStub.args[0][0]).to.contain('--debug');
@@ -88,9 +88,9 @@ describe('lwc:test:run', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:run', '--watch', '--debug'])
+    .command(['force:lightning:lwc:test:run', '--watch', '--debug'])
     .it('errors when watch and debug flag set', ctx => {
-      expect(ctx.stderr).to.contain('Invalid flags set')
+      expect(ctx.stderr).to.contain('Specify only --debug or --watch, not both')
     });
 
     test
@@ -101,7 +101,7 @@ describe('lwc:test:run', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:run'])
+    .command(['force:lightning:lwc:test:run'])
     .it('logs no executable error when lwc-jest path does not exist', ctx => {
       expect(ctx.stderr).to.contain('No lwc-jest executable found');
     });
@@ -114,7 +114,7 @@ describe('lwc:test:run', () => {
     .stdout()
     .stderr()
     .withProject()
-    .command(['lwc:test:run'])
+    .command(['force:lightning:lwc:test:run'])
     .it('logs no executable error when lwc-jest path does not exist', ctx => {
       expect(ctx.stderr).to.contain('No lwc-jest executable found');
     });
