@@ -46,7 +46,7 @@ EXAMPLE
   $ sfdx force:lightning:lwc:test:create -f force-app/main/default/lwc/myButton/myButton.js
 ```
 
-_See code: [src/commands/force/lightning/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.4/src/commands/force/lightning/lwc/test/create.ts)_
+_See code: [src/commands/force/lightning/lwc/test/create.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.5/src/commands/force/lightning/lwc/test/create.ts)_
 
 ## `sfdx force:lightning:lwc:test:run [-d] [--watch] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
@@ -67,7 +67,7 @@ EXAMPLES
   $ sfdx force:lightning:lwc:test:run -w
 ```
 
-_See code: [src/commands/force/lightning/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.4/src/commands/force/lightning/lwc/test/run.ts)_
+_See code: [src/commands/force/lightning/lwc/test/run.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.5/src/commands/force/lightning/lwc/test/run.ts)_
 
 ## `sfdx force:lightning:lwc:test:setup [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
@@ -85,7 +85,7 @@ EXAMPLE
   $ sfdx force:lightning:lwc:test:setup
 ```
 
-_See code: [src/commands/force/lightning/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.4/src/commands/force/lightning/lwc/test/setup.ts)_
+_See code: [src/commands/force/lightning/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.5/src/commands/force/lightning/lwc/test/setup.ts)_
 <!-- commandsstop -->
 <!-- debugging-your-plugin -->
 # Debugging your plugin
