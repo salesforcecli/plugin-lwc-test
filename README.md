@@ -12,7 +12,7 @@ Tools for unit testing Lightning web components in a Salesforce DX workspace
 
 Install as a plugin in the [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli).
 ```sh-session
-$ sfdx plugins:install lwc-test
+$ sfdx plugins:install @salesforce/plugin-lwc-test
 $ sfdx force:lightning:lwc --help
 ```
 
