@@ -1,0 +1,4 @@
+# code signing required patterns
+*.tgz
+*.sig
+package.json.bak
