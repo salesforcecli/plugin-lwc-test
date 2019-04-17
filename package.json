@@ -10,7 +10,6 @@
     "@salesforce/command": "^1.3.4",
     "@salesforce/core": "^1.3.0",
     "@salesforce/kit": "^1.0.4",
-    "@salesforce/lwc-jest": "^0.4.12",
     "signal-exit": "^3.0.2",
     "tslib": "^1"
   },
