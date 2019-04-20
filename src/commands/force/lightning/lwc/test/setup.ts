@@ -4,6 +4,7 @@ import { AnyJson } from '@salesforce/ts-types';
 import { spawnSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as semverCompare from 'semver-compare';
 import { FileWriter } from '../../../../../lib/fileWriter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -40,8 +41,10 @@ export default class Setup extends SfdxCommand {
     if (nodeVersionRet.error || nodeVersionRet.status !== 0) {
       throw new SfdxError(messages.getMessage('errorNodeNotFound'));
     }
-    const nodeVersion = nodeVersionRet.stdout.slice(1); // strip the v from v8.12.0
-    if (nodeVersion < '8.12.0') {
+
+    const nodeVersion = nodeVersionRet.stdout.slice(1).toString(); // strip the v from v8.12.0
+    // semver-compare returns -1 if first param is lower than second, 0 if they're equal, 1 if first param is higher
+    if (semverCompare(nodeVersion, '8.12.0') < 0) {
       throw new SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
     }
 
