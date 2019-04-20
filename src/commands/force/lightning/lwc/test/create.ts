@@ -36,6 +36,11 @@ export default class Create extends SfdxCommand {
       throw new SfdxError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
     }
 
+    const htmlPath = modulePath.substring(0, modulePath.lastIndexOf('.')) + '.html';
+    if (!fs.existsSync(htmlPath)) {
+      throw new SfdxError(messages.getMessage('errorHtmlFileNotFound', [this.flags.filepath]));
+    }
+
     const bundlePath = path.dirname(modulePath);
     const testDirPath = path.join(bundlePath, testDirName);
 
