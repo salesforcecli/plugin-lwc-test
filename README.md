@@ -1,5 +1,3 @@
-:warning: This plugin is currently in pilot for internal dogfooding. Functionality is subject to change and feedback is highly encouraged. For questions or feedback reach out to Trevor Bliss. :warning:
-
 @salesforce/plugin-lwc-test
 =============
 
@@ -7,18 +5,10 @@ Tools for unit testing Lightning web components in a Salesforce DX workspace
 
 ## Usage
 
-Install as a plugin in the [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli). While this plugin is in pilot you will need to point the `SFDX_NPM_REGISTRY` to the internal npm registry.
+Install as a plugin in the [Salesforce CLI](https://developer.salesforce.com/tools/sfdxcli). While this plugin is in pilot you will need to manually install the plugin into your CLI.
 ```sh-session
-$ SFDX_NPM_REGISTRY=http://platform-cli-registry.eng.sfdc.net:4880/ sfdx plugins:install @salesforce/plugin-lwc-test 
+$ sfdx plugins:install @salesforce/plugin-lwc-test
 $ sfdx force:lightning:lwc:test --help
-```
-
-Or, clone this repository and use the run script.
-```sh-session
-$ git clone git@git.soma.salesforce.com:tbliss/plugin-lwc-test.git
-$ cd plugin-lwc-test
-$ yarn
-$ ./bin/run force:lightning:lwc --help
 ```
 
 ## Commands 
