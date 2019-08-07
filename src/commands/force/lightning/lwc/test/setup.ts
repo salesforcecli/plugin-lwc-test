@@ -8,7 +8,7 @@ import * as semverCompare from 'semver-compare';
 import { FileWriter } from '../../../../../lib/fileWriter';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'setup');
+const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'setup');
 
 const testScripts = {
   'test:unit': 'lwc-jest',

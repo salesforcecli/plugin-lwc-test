@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'create');
+const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'create');
 
 export default class Create extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');

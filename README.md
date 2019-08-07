@@ -1,4 +1,4 @@
-@salesforce/plugin-lwc-test
+@salesforce/sfdx-plugin-lwc-test
 =============
 
 Tools for unit testing Lightning web components in a Salesforce DX workspace

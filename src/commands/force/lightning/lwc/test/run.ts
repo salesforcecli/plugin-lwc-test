@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('@salesforce/plugin-lwc-test', 'run');
+const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'run');
 
 export default class Run extends SfdxCommand {
 
