@@ -1,10 +1,12 @@
 ---
 version: 2
 jobs:
-  node-latest: &test
-    docker:
-      - image: node:latest
+  build_and_test:
     working_directory: ~/sfdx-plugin-lwc-test
+
+    docker:
+      - image: circleci/node:lts
+
     steps:
       - checkout
       - restore_cache:
@@ -25,14 +27,9 @@ jobs:
             - yarn.lock
             - node_modules
           key: yarn-v3-{{ checksum "yarn.lock" }}
-  node-8:
-    <<: *test
-    docker:
-      - image: node:8
 
 workflows:
   version: 2
   main_workflow:
     jobs:
-      - node-latest
-      - node-8
+      - build_and_test
