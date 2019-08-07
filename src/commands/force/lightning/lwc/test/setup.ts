@@ -135,7 +135,14 @@ export default class Setup extends SfdxCommand {
 
   private installLwcJest(): void {
     this.ux.log('Installing @salesforce/lwc-jest node package...');
-    const lwcJestInstallRet = spawnSync('npm', ['install', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
+    let lwcJestInstallRet;
+    const yarnLockExists = fs.existsSync(path.join(this.project.getPath(), 'yarn.lock'));
+    if (yarnLockExists) {
+      this.ux.log('Detected yarn.lock file, using yarn commands');
+      lwcJestInstallRet = spawnSync('yarn', ['add', '--dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
+    } else {
+      lwcJestInstallRet = spawnSync('npm', ['install', '--save-dev', '@salesforce/lwc-jest'], { stdio: 'inherit' });
+    }
     if (lwcJestInstallRet.error) {
       throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
     }
