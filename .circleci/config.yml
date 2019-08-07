@@ -4,30 +4,27 @@ jobs:
   node-latest: &test
     docker:
       - image: node:latest
-    working_directory: ~/cli
+    working_directory: ~/sfdx-plugin-lwc-test
     steps:
       - checkout
-      - restore_cache: &restore_cache
+      - restore_cache:
           keys:
-            - v1-npm-{{checksum ".circleci/config.yml"}}-{{ checksum "yarn.lock"}}
-            - v1-npm-{{checksum ".circleci/config.yml"}}
+          - yarn-v3-{{ checksum "yarn.lock" }}
       - run:
           name: Install dependencies
-          command: .circleci/greenkeeper
+          command: yarn
+      - run:
+          name: Build
+          command: yarn build
       - run:
           name: Testing
           command: yarn test
-      - run:
-          name: Submitting code coverage to codecov
-          command: |
-            ./node_modules/.bin/nyc report --reporter text-lcov > coverage.lcov
-            curl -s https://codecov.io/bash | bash
       - save_cache:
-          key: v1-yarn-{{checksum ".circleci/config.yml"}}-{{checksum "yarn.lock"}}
           paths:
-            - ~/cli/node_modules
-            - /usr/local/share/.cache/yarn
-            - /usr/local/share/.config/yarn
+            - ~/.cache/yarn
+            - yarn.lock
+            - node_modules
+          key: yarn-v3-{{ checksum "yarn.lock" }}
   node-8:
     <<: *test
     docker:
@@ -35,7 +32,7 @@ jobs:
 
 workflows:
   version: 2
-  "sfdx-lwc-test":
+  main_workflow:
     jobs:
       - node-latest
       - node-8
