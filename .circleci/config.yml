@@ -9,18 +9,23 @@ jobs:
 
     steps:
       - checkout
+
       - restore_cache:
           keys:
           - yarn-v3-{{ checksum "yarn.lock" }}
+
       - run:
           name: Install dependencies
           command: yarn
+
       - run:
           name: Build
           command: yarn build
+
       - run:
           name: Testing
           command: yarn test
+
       - save_cache:
           paths:
             - ~/.cache/yarn
