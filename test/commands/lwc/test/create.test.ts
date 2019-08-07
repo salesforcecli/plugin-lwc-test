@@ -13,7 +13,7 @@ describe('force:lightning:lwc:test:create', () => {
     .do(() => {
       // emulate the component under test existing, but the corresponding test file does not
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js') {
+        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
           return true;
         }
         if (path === '/path/to/js/__tests__/foo.test.js') {
@@ -33,7 +33,7 @@ describe('force:lightning:lwc:test:create', () => {
     test
     .do(() => {
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js') {
+        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
           return true;
         }
         if (path === '/path/to/js/__tests__/foo.test.js') {
@@ -53,7 +53,7 @@ describe('force:lightning:lwc:test:create', () => {
     test
     .do(() => {
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js') {
+        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
           return true;
         }
         if (path === '/path/to/js/__tests__/foo.test.js') {
@@ -73,7 +73,7 @@ describe('force:lightning:lwc:test:create', () => {
     test
     .do(() => {
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/fooBar.js') {
+        if (path === '/path/to/js/fooBar.js' || path === '/path/to/js/fooBar.html') {
           return true;
         }
         if (path === '/path/to/js/__tests__/fooBar.test.js') {
@@ -109,7 +109,7 @@ describe('force:lightning:lwc:test:create', () => {
     test
     .do(() => {
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js') {
+        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
           return true;
         }
         if (path === '/path/to/js/__tests__/foo.test.js') {
