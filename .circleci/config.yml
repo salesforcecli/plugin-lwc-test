@@ -35,6 +35,6 @@ jobs:
 
 workflows:
   version: 2
-  main_workflow:
+  build_and_test:
     jobs:
       - build_and_test
