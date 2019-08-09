@@ -1,7 +1,7 @@
 {
   "name": "@salesforce/sfdx-plugin-lwc-test",
   "description": "Tools for unit testing Lightning web components in a Salesforce DX workspace",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
