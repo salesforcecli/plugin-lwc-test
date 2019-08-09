@@ -273,7 +273,7 @@ describe('force:lightning:lwc:test:setup', () => {
     .command(['force:lightning:lwc:test:setup'])
     .it('write a jest.config.js file if no existing config found', ctx => {
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('jest.config.js');
-      expect(fileWriterStub.queueWrite.args[0][1]).to.contain("const { jestConfig } = require('@salesforce/lwc-jest/config'");
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain("const { jestConfig } = require('@salesforce/sfdx-lwc-jest/config'");
     });
   });
 
