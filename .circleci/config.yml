@@ -24,7 +24,7 @@ jobs:
 
       - run:
         name: Check License Headers
-        command: run: yarn check-license-headers
+        command: yarn check-license-headers
 
       - run:
           name: Testing
