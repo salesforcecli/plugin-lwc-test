@@ -23,8 +23,8 @@ jobs:
           command: yarn build
 
       - run:
-        name: Check License Headers
-        command: yarn check-license-headers
+          name: Check License Headers
+          command: yarn check-license-headers
 
       - run:
           name: Testing
