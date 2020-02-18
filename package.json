@@ -39,7 +39,6 @@
   "files": [
     "/lib",
     "/messages",
-    "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
   "keywords": [
