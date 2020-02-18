@@ -39,7 +39,6 @@
   "files": [
     "/lib",
     "/messages",
-    "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
   "keywords": [
@@ -70,9 +69,9 @@
   "scripts": {
     "check-license-headers": "node ./scripts/checkLicenseHeaders.js",
     "build": "tsc",
-    "postpack": "rm -f oclif.manifest.json npm-shrinkwrap.json",
+    "postpack": "rm -f oclif.manifest.json",
     "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
-    "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme && npm shrinkwrap",
+    "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   }
