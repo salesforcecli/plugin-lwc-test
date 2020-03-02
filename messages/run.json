@@ -2,7 +2,7 @@
   "example1": "$ sfdx force:lightning:lwc:test:run",
   "example2": "$ sfdx force:lightning:lwc:test:run -w",
   "commandDescription": "invokes Lightning Web Components Jest unit tests.",
-  "commandLongDescription": "Invokes Lightning Web Components Jest unit tests.",
+  "longDescription": "Invokes Lightning Web Components Jest unit tests.",
   "debugFlagDescription": "run tests in debug mode",
   "debugFlagLongDescription": "Runs tests in a Node process that an external debugger can connect to. The run pauses until the debugger is connected. For more information, see: https://jestjs.io/docs/en/troubleshooting",
   "watchFlagDescription": "run tests in watch mode",
