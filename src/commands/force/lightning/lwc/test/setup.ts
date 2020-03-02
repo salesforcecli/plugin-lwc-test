@@ -33,6 +33,7 @@ const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 export default class Setup extends SfdxCommand {
 
   public static description = messages.getMessage('commandDescription');
+  public static longDescription = messages.getMessage('longDescription');
 
   public static examples = [
     messages.getMessage('example')
