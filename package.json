@@ -83,11 +83,11 @@
     "check-license-headers": "node ./scripts/checkLicenseHeaders.js",
     "build": "tsc",
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish && yarn test:deprecation && yarn test:commandreference",
+    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish && yarn test:deprecation-policy && yarn test:command-reference",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
-    "test:deprecation": "./bin/run snapshot:compare",
-    "test:commandreference": "./bin/run commandreference:generate -p @salesforce/sfdx-plugin-lwc-test --erroronwarnings",
+    "test:deprecation-policy": "./bin/run snapshot:compare",
+    "test:command-reference": "./bin/run commandreference:generate -p @salesforce/sfdx-plugin-lwc-test --erroronwarnings",
     "version": "oclif-dev readme && git add README.md"
   }
 }
