@@ -15,9 +15,11 @@
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.0",
+    "@oclif/plugin-command-snapshot": "^1.0.0",
     "@oclif/plugin-help": "^1",
     "@oclif/test": "^1",
     "@salesforce/dev-config": "^1.1.0",
+    "@salesforce/plugin-command-reference": "^1.0.6",
     "@salesforce/ts-sinon": "^1.1.1",
     "@salesforce/ts-types": "^1.2.1",
     "@types/chai": "4",
@@ -50,11 +52,20 @@
     "commands": "./lib/commands",
     "topics": {
       "force": {
+        "external": true,
         "subtopics": {
           "lightning": {
+            "external": true,
             "subtopics": {
               "lwc": {
-                "description": "tools for unit testing Lightning web components in a Salesforce DX workspace"
+                "description": "tools for Lightning web components in a Salesforce DX workspace",
+                "longDescription": "Tools for Lightning web components in a Salesforce DX workspace.",
+                "subtopics": {
+                  "test": {
+                    "description": "tools for unit testing Lightning web components in a Salesforce DX workspace",
+                    "longDescription": "Tools for unit testing Lightning web components in a Salesforce DX workspace."
+                  }
+                }
               }
             }
           }
@@ -62,7 +73,9 @@
       }
     },
     "devPlugins": [
-      "@oclif/plugin-help"
+      "@oclif/plugin-help",
+      "@oclif/plugin-command-snapshot",
+      "@salesforce/plugin-command-reference"
     ]
   },
   "repository": "salesforce/sfdx-plugin-lwc-test",
@@ -70,9 +83,11 @@
     "check-license-headers": "node ./scripts/checkLicenseHeaders.js",
     "build": "tsc",
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
+    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish && yarn test:deprecation-policy && yarn test:command-reference",
     "prepack": "rm -rf lib && tsc && oclif-dev manifest && oclif-dev readme",
     "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
+    "test:deprecation-policy": "./bin/run snapshot:compare",
+    "test:command-reference": "./bin/run commandreference:generate -p @salesforce/sfdx-plugin-lwc-test --erroronwarnings",
     "version": "oclif-dev readme && git add README.md"
   }
 }

@@ -25,6 +25,7 @@ export default class Create extends SfdxCommand {
     filepath: flags.string({
       char: 'f',
       description: messages.getMessage('filepathFlagDescription'),
+      longDescription: messages.getMessage('filepathFlagLongDescription'),
       required: true
     })
   };
