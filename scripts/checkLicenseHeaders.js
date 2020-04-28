@@ -135,7 +135,7 @@ function check() {
       INCLUDED_PATTERNS.some(pattern => pattern.test(file)) &&
       !IGNORED_PATTERNS.some(pattern => pattern.test(file)) &&
       !isDirectory(file) &&
-      !isbinaryfile.sync(file) &&
+      !isbinaryfile.isBinaryFileSync(file) &&
       needsCopyrightHeader(file)
   );
 

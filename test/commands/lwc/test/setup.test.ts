@@ -26,14 +26,17 @@ describe('force:lightning:lwc:test:setup', () => {
     fileWriterStub.queueWrite.reset();
     fileWriterStub.writeFiles.reset();
     fileWriterStub.queueAppend.reset();
+    $$.SANDBOX.restore();
   });
 
   describe('without proper environment', () => {
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync')
-        .withArgs('node', sinon.match.any)
-        .returns({ status: 9009 }); // the exit code Windows VM gives with no Node installed
+      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+        if (cmd === 'node') {
+          return { status: 9009}; // the exit code Windows VM gives with no Node installed
+        }
+      });
     })
     .stdout()
     .stderr()
