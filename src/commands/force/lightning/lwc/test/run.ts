@@ -70,7 +70,10 @@ export default class Run extends SfdxCommand {
   }
 
   private runJest(args) {
-    return spawnSync(this.getExecutablePath(), args, { stdio: 'inherit' });
+    return spawnSync(this.getExecutablePath(), args, {
+      stdio: 'inherit',
+      shell: true
+    });
   }
 
   private getExecutablePath() {
