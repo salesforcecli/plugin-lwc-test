@@ -292,7 +292,7 @@ describe('force:lightning:lwc:test:setup', () => {
   describe('.forceignore', () => {
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
         if (cmd === 'node -v') {
           return VALID_NODE_VERSION_STDOUT;
         }
