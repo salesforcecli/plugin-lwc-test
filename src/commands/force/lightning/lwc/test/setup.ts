@@ -7,7 +7,7 @@
 import { SfdxCommand } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
-import { spawnSync } from 'child_process';
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semverCompare from 'semver-compare';
@@ -44,21 +44,8 @@ export default class Setup extends SfdxCommand {
   public async run(): Promise<AnyJson> {
     const fileWriter = this.getFileWriter();
 
-    const nodeVersionRet = spawnSync('node', ['-v']);
-    if (nodeVersionRet.error || nodeVersionRet.status !== 0) {
-      throw new SfdxError(messages.getMessage('errorNodeNotFound'));
-    }
-
-    const nodeVersion = nodeVersionRet.stdout.slice(1).toString(); // strip the v from v8.12.0
-    // semver-compare returns -1 if first param is lower than second, 0 if they're equal, 1 if first param is higher
-    if (semverCompare(nodeVersion, '8.12.0') < 0) {
-      throw new SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
-    }
-
-    const npmVersionRet = spawnSync('npm', ['-v']);
-    if (npmVersionRet.error || npmVersionRet.status !== 0) {
-      throw new SfdxError(messages.getMessage('errorNpmNotFound'));
-    }
+    checkNodeInstall();
+    checkNpmInstall();
 
     if (!fs.existsSync(this.getPackageJsonPath())) {
       throw new SfdxError(messages.getMessage('errorNoPackageJson'));
@@ -146,12 +133,36 @@ export default class Setup extends SfdxCommand {
     const yarnLockExists = fs.existsSync(path.join(this.project.getPath(), 'yarn.lock'));
     if (yarnLockExists) {
       this.ux.log('Detected yarn.lock file, using yarn commands');
-      lwcJestInstallRet = spawnSync('yarn', ['add', '--dev', '@salesforce/sfdx-lwc-jest'], { stdio: 'inherit' });
+      lwcJestInstallRet = execSync('yarn add --dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
     } else {
-      lwcJestInstallRet = spawnSync('npm', ['install', '--save-dev', '@salesforce/sfdx-lwc-jest'], { stdio: 'inherit' });
+      lwcJestInstallRet = execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
     }
     if (lwcJestInstallRet.error) {
       throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
     }
+  }
+}
+
+function checkNodeInstall() {
+  let nodeVersionRet: Buffer;
+
+  try {
+    nodeVersionRet = execSync('node -v');
+  } catch {
+    throw new SfdxError(messages.getMessage('errorNodeNotFound'));
+  }
+
+  const nodeVersion = nodeVersionRet.toString().slice(1); // strip the v from v8.12.0
+  // semver-compare returns -1 if first param is lower than second, 0 if they're equal, 1 if first param is higher
+  if (semverCompare(nodeVersion, '8.12.0') < 0) {
+    throw new SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
+  }
+}
+
+function checkNpmInstall() {
+  try {
+    execSync('npm -v');
+  } catch {
+    throw new SfdxError(messages.getMessage('errorNpmNotFound'));
   }
 }

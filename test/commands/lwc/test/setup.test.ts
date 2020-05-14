@@ -15,6 +15,9 @@ import Setup from '../../../../src/commands/force/lightning/lwc/test/setup';
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
 
+const VALID_NODE_VERSION_STDOUT = 'v8.12.0\n';
+const VALID_NPM_VERSION_STDOUT = 'v6.0.0\n';
+
 describe('force:lightning:lwc:test:setup', () => {
   let fileWriterStub = {
     queueWrite: sinon.stub(),
@@ -32,9 +35,9 @@ describe('force:lightning:lwc:test:setup', () => {
   describe('without proper environment', () => {
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 9009}; // the exit code Windows VM gives with no Node installed
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          throw new Error('Invalid command: node -v');
         }
       });
     })
@@ -48,9 +51,9 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v6.17.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return 'v6.17.0\n';
         }
       });
     })
@@ -64,12 +67,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 9009 };
+        if (cmd === 'npm -v') {
+          throw new Error('Invalid command: npm -v');
         }
       });
     })
@@ -83,12 +86,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
     })
@@ -104,12 +107,12 @@ describe('force:lightning:lwc:test:setup', () => {
   describe('package.json', () => {
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
@@ -134,12 +137,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
@@ -166,12 +169,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
@@ -197,12 +200,12 @@ describe('force:lightning:lwc:test:setup', () => {
   describe('jest config', () => {
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
@@ -226,12 +229,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
@@ -252,12 +255,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
@@ -289,12 +292,12 @@ describe('force:lightning:lwc:test:setup', () => {
   describe('.forceignore', () => {
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
@@ -322,12 +325,12 @@ describe('force:lightning:lwc:test:setup', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+      stubMethod($$.SANDBOX, child_process, 'execSync').callsFake(cmd => {
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
@@ -359,11 +362,11 @@ describe('force:lightning:lwc:test:setup', () => {
     test
     .do(() => {
       stubMethod($$.SANDBOX, child_process, 'spawnSync').callsFake(cmd => {
-        if (cmd === 'node') {
-          return { status: 0, stdout: 'v8.12.0' };
+        if (cmd === 'node -v') {
+          return VALID_NODE_VERSION_STDOUT;
         }
-        if (cmd === 'npm') {
-          return { status: 0 };
+        if (cmd === 'npm -v') {
+          return VALID_NPM_VERSION_STDOUT;
         }
       });
       stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
