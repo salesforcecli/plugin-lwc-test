@@ -23,16 +23,16 @@
     "@salesforce/ts-sinon": "^1.1.2",
     "@salesforce/ts-types": "^1.2.2",
     "@types/chai": "4.2.11",
-    "@types/jsforce": "^1.9.16",
+    "@types/jsforce": "^1.9.18",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.13.2",
     "chai": "^4.2.0",
     "isbinaryfile": "^4.0.6",
     "mocha": "^7.1.1",
-    "nyc": "^15.0.1",
+    "nyc": "^15.1.0",
     "sinon": "^9.0.2",
-    "ts-node": "^8.9.0",
-    "typescript": "^3.8.3"
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
   },
   "resolutions": {
     "mkdirp": "^0.5.5"
