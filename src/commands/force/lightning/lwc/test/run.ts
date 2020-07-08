@@ -79,8 +79,8 @@ export default class Run extends SfdxCommand {
   private getExecutablePath() {
     const projectPath = this.project.getPath();
     const nodeModulePath = process.platform === 'win32' ?
-      path.join('@salesforce', 'sfdx-lwc-jest', 'bin', 'lwc-jest') :
-      path.join('.bin', 'lwc-jest');
+      path.join('@salesforce', 'sfdx-lwc-jest', 'bin', 'sfdx-lwc-jest') :
+      path.join('.bin', 'sfdx-lwc-jest');
 
     const executablePath = path.join(projectPath, 'node_modules', nodeModulePath);
     if (!fs.existsSync(executablePath)) {

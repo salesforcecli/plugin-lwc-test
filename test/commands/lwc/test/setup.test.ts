@@ -132,7 +132,7 @@ describe('force:lightning:lwc:test:setup', () => {
       // first param is the path, just make sure this is the package.json write
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('package.json');
       // second param is the content - verify contains test scripts
-      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "lwc-jest"');
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "sfdx-lwc-jest"');
     });
 
     test
@@ -164,7 +164,7 @@ describe('force:lightning:lwc:test:setup', () => {
       // first param is the path, just make sure this is the package.json write
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('package.json');
       // second param is the content - verify contains test scripts
-      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "lwc-jest"');
+      expect(fileWriterStub.queueWrite.args[0][1]).to.contain('"test:unit": "sfdx-lwc-jest"');
     });
 
     test
