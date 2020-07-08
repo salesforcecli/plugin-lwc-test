@@ -102,26 +102,26 @@ describe('force:lightning:lwc:test:run', () => {
     test
     .do(() => {
       stubMethod($$.SANDBOX, child_process, 'spawnSync').returns(successReturn);
-      stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(sinon.match('lwc-jest')).returns(false);
+      stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(sinon.match('sfdx-lwc-jest')).returns(false);
     })
     .stdout()
     .stderr()
     .withProject()
     .command(['force:lightning:lwc:test:run'])
-    .it('logs no executable error when lwc-jest path does not exist', ctx => {
-      expect(ctx.stderr).to.contain('No lwc-jest executable found');
+    .it('logs no executable error when sfdx-lwc-jest path does not exist', ctx => {
+      expect(ctx.stderr).to.contain('No sfdx-lwc-jest executable found');
     });
 
     test
     .do(() => {
       stubMethod($$.SANDBOX, child_process, 'spawnSync').returns(successReturn);
-      stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(sinon.match('lwc-jest')).returns(false);
+      stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(sinon.match('sfdx-lwc-jest')).returns(false);
     })
     .stdout()
     .stderr()
     .withProject()
     .command(['force:lightning:lwc:test:run'])
-    .it('logs no executable error when lwc-jest path does not exist', ctx => {
-      expect(ctx.stderr).to.contain('No lwc-jest executable found');
+    .it('logs no executable error when sfdx-lwc-jest path does not exist', ctx => {
+      expect(ctx.stderr).to.contain('No sfdx-lwc-jest executable found');
     });
 });

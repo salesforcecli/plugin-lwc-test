@@ -7,7 +7,7 @@
   "debugFlagLongDescription": "Runs tests in a Node process that an external debugger can connect to. The run pauses until the debugger is connected. For more information, see: https://jestjs.io/docs/en/troubleshooting",
   "watchFlagDescription": "run tests in watch mode",
   "watchFlagLongDescription": "Runs tests when a watched file changes. Watched files include the component under test and any files it references.",
-  "errorNoExecutableFound": "No lwc-jest executable found. Verify it is properly installed.\nRun \"sfdx force:lightning:lwc:test:setup --help\" for installation details.",
+  "errorNoExecutableFound": "No sfdx-lwc-jest executable found. Verify it is properly installed.\nRun \"sfdx force:lightning:lwc:test:setup --help\" for installation details.",
   "errorInvalidFlags": "Specify only --debug or --watch, not both.",
   "logSuccess": "Test run complete. Exited with status code: %s"
 }

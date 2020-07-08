@@ -17,9 +17,9 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'setup');
 
 const testScripts = {
-  'test:unit': 'lwc-jest',
-  'test:unit:debug': 'lwc-jest --debug',
-  'test:unit:watch': 'lwc-jest --watch'
+  'test:unit': 'sfdx-lwc-jest',
+  'test:unit:debug': 'sfdx-lwc-jest --debug',
+  'test:unit:watch': 'sfdx-lwc-jest --watch'
 };
 
 const jestConfig = `const { jestConfig } = require('@salesforce/sfdx-lwc-jest/config');
@@ -129,16 +129,12 @@ export default class Setup extends SfdxCommand {
 
   private installLwcJest(): void {
     this.ux.log('Installing @salesforce/sfdx-lwc-jest node package...');
-    let lwcJestInstallRet;
     const yarnLockExists = fs.existsSync(path.join(this.project.getPath(), 'yarn.lock'));
     if (yarnLockExists) {
       this.ux.log('Detected yarn.lock file, using yarn commands');
-      lwcJestInstallRet = execSync('yarn add --dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
+      execSync('yarn add --dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
     } else {
-      lwcJestInstallRet = execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
-    }
-    if (lwcJestInstallRet.error) {
-      throw new SfdxError(messages.getMessage('errorLwcJestInstall', [lwcJestInstallRet.error.message]));
+      execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
     }
   }
 }
