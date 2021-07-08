@@ -73,3 +73,4 @@ EXAMPLE
 ```
 
 _See code: [src/commands/force/lightning/lwc/test/setup.ts](https://github.com/trevor-bliss/sfdx-lwc-test/blob/v0.0.6/src/commands/force/lightning/lwc/test/setup.ts)_
+
