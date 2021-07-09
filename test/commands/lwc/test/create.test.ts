@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
  */
 import * as fs from 'fs';
+import * as sinon from 'sinon';
+import { SinonStub } from "sinon";
 import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
@@ -15,17 +17,19 @@ const $$ = testSetup();
 describe('force:lightning:lwc:test:create', () => {
   let writeFileSyncStub;
 
+  afterEach(() => {
+    $$.SANDBOX.restore();
+  });
+
   test
     .do(() => {
       // emulate the component under test existing, but the corresponding test file does not
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
-          return true;
-        }
-        if (path === '/path/to/js/__tests__/foo.test.js') {
-          return false;
-        }
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match.in(['/path/to/js/foo.js', '/path/to/js/foo.html']))
+        .returns(true)
+        .withArgs('/path/to/js/__tests__/foo.test.js')
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'mkdirSync');
       stubMethod($$.SANDBOX, fs, 'writeFileSync');
     })
@@ -38,14 +42,12 @@ describe('force:lightning:lwc:test:create', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
-          return true;
-        }
-        if (path === '/path/to/js/__tests__/foo.test.js') {
-          return false;
-        }
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match.in(['/path/to/js/foo.js', '/path/to/js/foo.html']))
+        .returns(true)
+        .withArgs('/path/to/js/__tests__/foo.test.js')
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'mkdirSync');
       writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
     })
@@ -58,14 +60,12 @@ describe('force:lightning:lwc:test:create', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
-          return true;
-        }
-        if (path === '/path/to/js/__tests__/foo.test.js') {
-          return false;
-        }
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match.in(['/path/to/js/foo.js', '/path/to/js/foo.html']))
+        .returns(true)
+        .withArgs('/path/to/js/__tests__/foo.test.js')
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'mkdirSync');
       writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
     })
@@ -78,14 +78,12 @@ describe('force:lightning:lwc:test:create', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/fooBar.js' || path === '/path/to/js/fooBar.html') {
-          return true;
-        }
-        if (path === '/path/to/js/__tests__/fooBar.test.js') {
-          return false;
-        }
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match.in(['/path/to/js/fooBar.js', '/path/to/js/fooBar.html']))
+        .returns(true)
+        .withArgs('/path/to/js/__tests__/fooBar.test.js')
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'mkdirSync');
       writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
     })
@@ -98,11 +96,10 @@ describe('force:lightning:lwc:test:create', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js') {
-          return false;
-        }
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs('/path/to/js/foo.js')
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
     })
     .stdout()
     .stderr()
@@ -114,14 +111,10 @@ describe('force:lightning:lwc:test:create', () => {
 
     test
     .do(() => {
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path === '/path/to/js/foo.js' || path === '/path/to/js/foo.html') {
-          return true;
-        }
-        if (path === '/path/to/js/__tests__/foo.test.js') {
-          return true;
-        }
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match.in(['/path/to/js/foo.js', '/path/to/js/foo.html', '/path/to/js/__tests__/foo.test.js']))
+        .returns(true);
+      (fs.existsSync as SinonStub).callThrough();
     })
     .stdout()
     .stderr()

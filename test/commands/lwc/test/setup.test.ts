@@ -11,6 +11,7 @@ import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import Setup from '../../../../src/commands/force/lightning/lwc/test/setup';
+import { SinonStub } from "sinon";
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
@@ -115,7 +116,10 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match(/.*\/sfdx_core\/local\/package\.json$/))
+        .returns(true);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       // this stub is key. we have a package.json but no "scripts" section
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
@@ -145,7 +149,10 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match(/.*\/sfdx_core\/local\/package\.json$/))
+        .returns(true);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
         "name": "from test",
@@ -177,7 +184,6 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
         "name": 'from test',
@@ -208,7 +214,6 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
@@ -237,7 +242,6 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').returns(true);
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
@@ -263,15 +267,12 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path.indexOf('package.json') !== -1) {
-          return true;
-        }
-        if (path.indexOf('jest.config.js') !== -1) {
-          return false;
-        }
-        return true;
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match(sinon.match(/.*\/sfdx_core\/local\/package\.json$/)))
+        .returns(true)
+        .withArgs(sinon.match(sinon.match(/.*jest.config.js$/)))
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
@@ -300,15 +301,12 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path.indexOf('package.json') !== -1) {
-          return true;
-        }
-        if (path.indexOf('forceignore') !== -1) {
-          return false;
-        }
-        return true;
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match(sinon.match(/.*\/sfdx_core\/local\/package\.json$/)))
+        .returns(true)
+        .withArgs(sinon.match(sinon.match(/.*forceignore.*/)))
+        .returns(false);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
       stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
       stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
@@ -333,12 +331,12 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path.indexOf('package.json') !== -1) {
-          return true;
-        }
-        return true;
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match(sinon.match(/.*\/sfdx_core\/local\/package\.json$/)))
+        .returns(true)
+        .withArgs(sinon.match(sinon.match(/.*forceignore.*/)))
+        .returns(true);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'readFileSync').callsFake(path => {
         if (path.indexOf('forceignore') !== -1) {
           return "from test";
@@ -369,12 +367,12 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      stubMethod($$.SANDBOX, fs, 'existsSync').callsFake(path => {
-        if (path.indexOf('package.json') !== -1) {
-          return true;
-        }
-        return true;
-      });
+      stubMethod($$.SANDBOX, fs, 'existsSync')
+        .withArgs(sinon.match(sinon.match(/.*\/sfdx_core\/local\/package\.json$/)))
+        .returns(true)
+        .withArgs(sinon.match(sinon.match(/.*forceignore.*/)))
+        .returns(true);
+      (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'readFileSync').callsFake(path => {
         if (path.indexOf('forceignore') !== -1) {
           return "**/__tests__/**";
