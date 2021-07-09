@@ -2,7 +2,6 @@
   "name": "@salesforce/sfdx-plugin-lwc-test",
   "description": "Tools for unit testing Lightning web components in a Salesforce DX workspace",
   "version": "0.1.1",
-  "// @oclif/config v1.14.0+ is broken because of https://github.com/oclif/oclif/issues/182": true,
   "dependencies": {
     "@oclif/command": "^1.8.0",
     "@oclif/config": "1.13.3",
