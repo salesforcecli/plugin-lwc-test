@@ -11,6 +11,7 @@ import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import Run from '../../../../src/commands/force/lightning/lwc/test/run';
+import { SinonStub } from "sinon";
 
 // Mock all things in core, like api, file io, etc.
 const $$ = testSetup();
@@ -19,6 +20,10 @@ const successReturn = { status: 0 };
 
 describe('force:lightning:lwc:test:run', () => {
   let runJestStub;
+
+  afterEach(() => {
+    $$.SANDBOX.restore();
+  });
 
   test
     .do(() => {
@@ -103,6 +108,7 @@ describe('force:lightning:lwc:test:run', () => {
     .do(() => {
       stubMethod($$.SANDBOX, child_process, 'spawnSync').returns(successReturn);
       stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(sinon.match('sfdx-lwc-jest')).returns(false);
+      (fs.existsSync as SinonStub).callThrough();
     })
     .stdout()
     .stderr()
@@ -116,6 +122,7 @@ describe('force:lightning:lwc:test:run', () => {
     .do(() => {
       stubMethod($$.SANDBOX, child_process, 'spawnSync').returns(successReturn);
       stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(sinon.match('sfdx-lwc-jest')).returns(false);
+      (fs.existsSync as SinonStub).callThrough();
     })
     .stdout()
     .stderr()
