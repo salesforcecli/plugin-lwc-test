@@ -12,7 +12,19 @@
     },
     {
         "command": "commands",
-        "flags": []
+        "flags": [
+          "help",
+          "json",
+          "hidden",
+          "columns",
+          "sort",
+          "filter",
+          "csv",
+          "output",
+          "extended",
+          "no-truncate",
+          "no-header"
+      ]
     },
     {
         "command": "force:lightning:lwc:test:create",
