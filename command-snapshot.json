@@ -1,71 +1,29 @@
 [
     {
-        "command": "commandreference:generate",
-        "flags": [
-            "json",
-            "loglevel",
-            "outputdir",
-            "plugins",
-            "hidden",
-            "erroronwarnings"
-        ]
-    },
-    {
-        "command": "commands",
-        "flags": [
-          "help",
-          "json",
-          "hidden",
-          "columns",
-          "sort",
-          "filter",
-          "csv",
-          "output",
-          "extended",
-          "no-truncate",
-          "no-header"
-      ]
-    },
-    {
         "command": "force:lightning:lwc:test:create",
+        "plugin": "@salesforce/sfdx-plugin-lwc-test",
         "flags": [
-            "json",
-            "loglevel",
-            "filepath"
-        ]
-    },
-    {
-        "command": "force:lightning:lwc:test:run",
-        "flags": [
-            "json",
-            "loglevel",
-            "debug",
-            "watch"
-        ]
-    },
-    {
-        "command": "force:lightning:lwc:test:setup",
-        "flags": [
+            "filepath",
             "json",
             "loglevel"
         ]
     },
     {
-        "command": "help",
+        "command": "force:lightning:lwc:test:run",
+        "plugin": "@salesforce/sfdx-plugin-lwc-test",
         "flags": [
-            "all"
+            "debug",
+            "json",
+            "loglevel",
+            "watch"
         ]
     },
     {
-        "command": "snapshot:compare",
+        "command": "force:lightning:lwc:test:setup",
+        "plugin": "@salesforce/sfdx-plugin-lwc-test",
         "flags": [
-            "filepath"
-        ]
-    },
-    {
-        "command": "snapshot:generate",
-        "flags": [
-            "filepath"
+            "json",
+            "loglevel"
         ]
     }
 ]
