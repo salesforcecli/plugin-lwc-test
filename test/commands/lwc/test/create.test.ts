@@ -59,6 +59,24 @@ describe('force:lightning:lwc:test:create', () => {
     });
 
     test
+      .do(() => {
+        stubMethod($$.SANDBOX, fs, 'existsSync')
+          .withArgs(sinon.match.in(['/path/to/js/foo.js']))
+          .returns(true)
+          .withArgs('/path/to/js/__tests__/foo.test.js')
+          .returns(false);
+        (fs.existsSync as SinonStub).callThrough();
+        stubMethod($$.SANDBOX, fs, 'mkdirSync');
+        writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
+      })
+      .stdout()
+      .withProject()
+      .command(['force:lightning:lwc:test:create', '-f', '/path/to/js/foo.js'])
+      .it('creates test file in __tests__ folder of component bundle when .html file is missing', ctx => {
+        expect(writeFileSyncStub.args[0][0]).to.equal('/path/to/js/__tests__/foo.test.js');
+      });
+
+    test
     .do(() => {
       stubMethod($$.SANDBOX, fs, 'existsSync')
         .withArgs(sinon.match.in(['/path/to/js/foo.js', '/path/to/js/foo.html']))
