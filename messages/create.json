@@ -7,6 +7,5 @@
   "errorFileNotFound": "File not found: '%s'.",
   "errorFileNotJs": "File must be a JavaScript file. The '.js' extension was not found: '%s'.",
   "errorFileExists": "Test file already exists: '%s'.",
-  "errorHtmlFileNotFound": "No corresponding HTML file found for '%s'. This command only supports Lightning web components with corresponding HTML and JavaScript files in the same directory.",
   "logSuccess": "Test case successfully created: %s"
 }
