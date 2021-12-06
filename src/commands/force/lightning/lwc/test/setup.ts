@@ -46,7 +46,6 @@ export default class Setup extends SfdxCommand {
 
     checkNodeInstall();
     checkNpmInstall();
-
     if (!fs.existsSync(this.getPackageJsonPath())) {
       throw new SfdxError(messages.getMessage('errorNoPackageJson'));
     }

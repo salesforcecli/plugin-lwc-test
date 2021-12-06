@@ -30,7 +30,7 @@ describe('force:lightning:lwc:test:run', () => {
       stubMethod($$.SANDBOX, Run.prototype, 'runJest').returns(successReturn);
     })
     .stdout()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run'])
     .it('outputs completed message on status code 0', ctx => {
       expect(ctx.stdout).to.contain('Test run complete. Exited with status code: 0');
@@ -41,7 +41,7 @@ describe('force:lightning:lwc:test:run', () => {
       stubMethod($$.SANDBOX, Run.prototype, 'runJest').returns({ status: 1 });
     })
     .stdout()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run'])
     .it('outputs completed message on status code 1 (failed tests)', ctx => {
       expect(ctx.stdout).to.contain('Test run complete. Exited with status code: 1');
@@ -52,7 +52,7 @@ describe('force:lightning:lwc:test:run', () => {
       runJestStub = stubMethod($$.SANDBOX, Run.prototype, 'runJest').returns(successReturn);
     })
     .stdout()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run', '--debug'])
     .it('passes --debug to runJest when debug flag set', ctx => {
       expect(runJestStub.args[0][0]).to.contain('--debug');
@@ -63,7 +63,7 @@ describe('force:lightning:lwc:test:run', () => {
       runJestStub = stubMethod($$.SANDBOX, Run.prototype, 'runJest').returns (successReturn);
     })
     .stdout()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run', '--watch'])
     .it('passes --watch to runJest when debug flag set', ctx => {
       expect(runJestStub.args[0][0]).to.contain('--watch');
@@ -74,7 +74,7 @@ describe('force:lightning:lwc:test:run', () => {
       runJestStub = stubMethod($$.SANDBOX, Run.prototype, 'runJest').returns (successReturn);
     })
     .stdout()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run', 'path/to/test'])
     .it('passes extra args to runJest', ctx => {
       expect(runJestStub.args[0][0]).to.contain('path/to/test');
@@ -85,7 +85,7 @@ describe('force:lightning:lwc:test:run', () => {
       runJestStub = stubMethod($$.SANDBOX, Run.prototype, 'runJest').returns (successReturn);
     })
     .stdout()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run', '--debug', 'path/to/test'])
     .it('passes extra args and debug flag to runJest', ctx => {
       expect(runJestStub.args[0][0]).to.contain('path/to/test');
@@ -98,7 +98,7 @@ describe('force:lightning:lwc:test:run', () => {
     })
     .stdout()
     .stderr()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run', '--watch', '--debug'])
     .it('errors when watch and debug flag set', ctx => {
       expect(ctx.stderr).to.contain('Specify only --debug or --watch, not both')
@@ -112,7 +112,7 @@ describe('force:lightning:lwc:test:run', () => {
     })
     .stdout()
     .stderr()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run'])
     .it('logs no executable error when sfdx-lwc-jest path does not exist', ctx => {
       expect(ctx.stderr).to.contain('No sfdx-lwc-jest executable found');
@@ -126,7 +126,7 @@ describe('force:lightning:lwc:test:run', () => {
     })
     .stdout()
     .stderr()
-    .withProject()
+    // .withProject()
     .command(['force:lightning:lwc:test:run'])
     .it('logs no executable error when sfdx-lwc-jest path does not exist', ctx => {
       expect(ctx.stderr).to.contain('No sfdx-lwc-jest executable found');
