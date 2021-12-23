@@ -10,7 +10,7 @@
     "@salesforce/core": "^2.25.1",
     "@salesforce/kit": "^1.5.16",
     "semver-compare": "^1.0.0",
-    "signal-exit": "^3.0.3",
+    "signal-exit": "^3.0.6",
     "tslib": "^2.3.1"
   },
   "//": "Cannot upgrade ts-node to 10.2.0+ until source-map-support is fixed: https://git.io/JuCiI",
