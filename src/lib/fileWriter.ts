@@ -1,14 +1,14 @@
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
- * SPDX-License-Identifier: MIT
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import * as crypto from 'crypto';
 import * as fs from 'fs';
-import * as signalExit from 'signal-exit';
+import signalExit = require('signal-exit');
 
-export class FileWriter  {
+export class FileWriter {
   /*
    * Queue of files to write. May be a new file or replace an existing one.
    */
@@ -32,68 +32,79 @@ export class FileWriter  {
    */
   private newFiles = [];
 
-  constructor() {}
+  public constructor() {
+    // nothing to construct
+  }
 
-  public queueWrite(filepath: string, content: string, options?: object): void {
+  public queueWrite(filepath: string, content: string, options?: fs.WriteFileOptions): void {
     this.writeQueue.push({
       filepath,
       content,
-      options
+      options,
     });
   }
 
-  public queueAppend(filepath: string, toAppend: string, options?: object): void {
+  public queueAppend(filepath: string, toAppend: string, options?: fs.WriteFileOptions): void {
     this.appendQueue.push({
       filepath,
       toAppend,
-      options
+      options,
     });
   }
 
   public writeFiles(): void {
     const cleanup = this.revertChanges();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
     const removeExitHandler = signalExit(cleanup);
     try {
-      this.appendQueue.forEach(item => {
-        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
-        if (!fs.existsSync(item.filepath)) {
-          throw new Error('Attempting to append to file that does not exist: ' + item.filepath);
-        }
-        fs.copyFileSync(item.filepath, tmpFilename);
-        this.tmpFilelist[item.filepath] = tmpFilename;
-        fs.appendFileSync(item.filepath, item.toAppend, item.options);
-      });
-
-      this.writeQueue.forEach(item => {
-        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
-        if (fs.existsSync(item.filepath)) {
+      this.appendQueue.forEach(
+        (item: { filepath: string; toAppend: string | Uint8Array; options: fs.WriteFileOptions }) => {
+          const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
+          if (!fs.existsSync(item.filepath)) {
+            throw new Error('Attempting to append to file that does not exist: ' + item.filepath);
+          }
           fs.copyFileSync(item.filepath, tmpFilename);
           this.tmpFilelist[item.filepath] = tmpFilename;
-        } else {
-          this.newFiles.push(item.filepath);
+          fs.appendFileSync(item.filepath, item.toAppend, item.options);
         }
-        fs.writeFileSync(item.filepath, item.content, item.options);
-      });
+      );
+
+      this.writeQueue.forEach(
+        (item: { filepath: string; content: string | Uint8Array; options: fs.WriteFileOptions }) => {
+          const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
+          if (fs.existsSync(item.filepath)) {
+            fs.copyFileSync(item.filepath, tmpFilename);
+            this.tmpFilelist[item.filepath] = tmpFilename;
+          } else {
+            this.newFiles.push(item.filepath);
+          }
+          fs.writeFileSync(item.filepath, item.content, item.options);
+        }
+      );
       // things worked fine so remove handler and only remove temp files
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       removeExitHandler();
       this.removeTempFiles();
     } catch (e) {
       // TODO(tbliss): how to get access to the same logger that the commands have?
+      // eslint-disable-next-line no-console
       console.log('Error writing files. Attempting to revert back to original state.');
+      // eslint-disable-next-line no-console
       console.log(e);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       removeExitHandler();
       cleanup();
     }
   }
 
   private revertChanges(): () => void {
-    return () => {
+    return (): void => {
       // replace original files with temp backups
-      Object.keys(this.tmpFilelist).forEach(item => {
+      Object.keys(this.tmpFilelist).forEach((item) => {
         fs.copyFileSync(this.tmpFilelist[item], item);
       });
 
-      this.newFiles.forEach(file => {
+      this.newFiles.forEach((file) => {
         fs.unlinkSync(file);
       });
 
@@ -101,18 +112,13 @@ export class FileWriter  {
     };
   }
 
-  private removeTempFiles() {
-    Object.keys(this.tmpFilelist).forEach(item => {
+  private removeTempFiles(): void {
+    Object.keys(this.tmpFilelist).forEach((item) => {
       fs.unlinkSync(this.tmpFilelist[item]);
     });
   }
 
   private getHash(filename: string): string {
-    return crypto
-      .createHash('md5')
-      .update(filename, 'utf8')
-      .update(String(process.pid), 'utf8')
-      .digest('hex');
+    return crypto.createHash('md5').update(filename, 'utf8').update(String(process.pid), 'utf8').digest('hex');
   }
-
 }

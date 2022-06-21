@@ -8,6 +8,5 @@
   "watchFlagDescription": "run tests in watch mode",
   "watchFlagLongDescription": "Runs tests when a watched file changes. Watched files include the component under test and any files it references.",
   "errorNoExecutableFound": "No sfdx-lwc-jest executable found. Verify it is properly installed.\nRun \"sfdx force:lightning:lwc:test:setup --help\" for installation details.",
-  "errorInvalidFlags": "Specify only --debug or --watch, not both.",
   "logSuccess": "Test run complete. Exited with status code: %s"
 }
