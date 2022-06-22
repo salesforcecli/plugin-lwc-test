@@ -62,7 +62,10 @@ export default class Run extends SfdxCommand {
   }
 
   public runJest(args: string[]): cp.SpawnSyncReturns<Buffer> {
-    return cp.spawnSync(this.getExecutablePath(), args, {
+    // on windows we must execute with the node prefix
+    const executable = process.platform === 'win32' ? `node ${this.getExecutablePath()}` : this.getExecutablePath();
+
+    return cp.spawnSync(executable, args, {
       stdio: 'inherit',
       shell: true,
     });
