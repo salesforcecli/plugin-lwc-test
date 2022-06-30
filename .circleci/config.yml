@@ -1,44 +1,103 @@
----
-version: 2
-jobs:
-  build_and_test:
-    working_directory: ~/sfdx-plugin-lwc-test
-
-    docker:
-      - image: circleci/node:lts
-
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-          - yarn-v3-{{ checksum "yarn.lock" }}
-
-      - run:
-          name: Install dependencies
-          command: yarn
-
-      - run:
-          name: Build
-          command: yarn build
-
-      - run:
-          name: Check License Headers
-          command: yarn check-license-headers
-
-      - run:
-          name: Testing
-          command: yarn test
-
-      - save_cache:
-          paths:
-            - ~/.cache/yarn
-            - yarn.lock
-            - node_modules
-          key: yarn-v3-{{ checksum "yarn.lock" }}
-
+version: 2.1
+orbs:
+  release-management: salesforce/npm-release-management@4
+parameters:
+  sfdx_version:
+    description: |
+      By default, the latest version of the standalone CLI will be installed.
+      To install via npm, supply a version tag such as "latest" or "6".
+    default: ''
+    type: string
+  repo_tag:
+    description: "The tag of the module repo to checkout, '' defaults to branch/PR"
+    default: ''
+    type: string
+  npm_module_name:
+    description: 'The fully qualified npm module name, i.e. @salesforce/plugins-data'
+    default: ''
+    type: string
+  workflow:
+    description: |
+      String that controls which workflow would run.
+      This parameter is used by automation to determine if a workflow will run
+      within a pipeline.
+    type: string
+    default: 'test-and-release'
 workflows:
   version: 2
-  build_and_test:
+  test-and-release:
+    when:
+      equal: [test-and-release, << pipeline.parameters.workflow >>]
     jobs:
-      - build_and_test
+      - release-management/validate-pr:
+          filters:
+            branches:
+              ignore: main
+      - release-management/test-package:
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+              node_version:
+                # - latest
+                - lts
+                - maintenance
+            exclude:
+              - os: windows
+                node_version: maintenance
+      - release-management/test-nut:
+          context: na40-auth-url
+          sfdx_version: latest
+          node_version: lts
+          size: large
+          requires:
+            - release-management/test-package
+          no_output_timeout: 30m
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+              command:
+                - 'yarn test:nuts'
+      - release-management/release-package:
+          sign: true
+          github-release: true
+          requires:
+            - release-management/test-package
+          filters:
+            branches:
+              only: main
+          context:
+            - CLI_CTC
+            - AWS
+            - release
+  test-ts-update:
+    when:
+      equal: [test-ts-update, << pipeline.parameters.workflow >>]
+    jobs:
+      - release-management/test-ts-update
+  just-nuts:
+    when:
+      equal: [just-nuts, << pipeline.parameters.workflow >>]
+    jobs:
+      - release-management/test-nut:
+          name: just-nuts-<< matrix.os >>
+          sfdx_version: << pipeline.parameters.sfdx_version >>
+          sfdx_executable_path: sfdx
+          repo_tag: << pipeline.parameters.repo_tag >>
+          matrix:
+            parameters:
+              os:
+                - linux
+                - windows
+          npm_module_name: << pipeline.parameters.npm_module_name >>
+          context: na40-auth-url
+  dependabot-automerge:
+    when:
+      equal: [dependabot-automerge, << pipeline.parameters.workflow >>]
+    jobs:
+      - release-management/dependabot-automerge:
+          merge-method: squash
+          context: release

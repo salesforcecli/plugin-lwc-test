@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
- * SPDX-License-Identifier: MIT
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { SfdxCommand } from '@salesforce/command';
-import { Messages, SfdxError } from '@salesforce/core';
-import { AnyJson } from '@salesforce/ts-types';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as semverCompare from 'semver-compare';
+import { SfdxCommand } from '@salesforce/command';
+import { Messages, SfError } from '@salesforce/core';
+import semverCompare = require('semver-compare');
 import { FileWriter } from '../../../../../lib/fileWriter';
 
 Messages.importMessagesDirectory(__dirname);
@@ -19,7 +18,7 @@ const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'setu
 const testScripts = {
   'test:unit': 'sfdx-lwc-jest',
   'test:unit:debug': 'sfdx-lwc-jest --debug',
-  'test:unit:watch': 'sfdx-lwc-jest --watch'
+  'test:unit:watch': 'sfdx-lwc-jest --watch',
 };
 
 const jestConfig = `const { jestConfig } = require('@salesforce/sfdx-lwc-jest/config');
@@ -28,27 +27,27 @@ module.exports = {
     // add any custom configurations here
 };`;
 
+export type SetupResult = {
+  message: string;
+};
+
 const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 
 export default class Setup extends SfdxCommand {
-
   public static description = messages.getMessage('commandDescription');
   public static longDescription = messages.getMessage('longDescription');
-
-  public static examples = [
-    messages.getMessage('example')
-  ];
-
+  public static examples = [messages.getMessage('example')];
   protected static requiresProject = true;
 
-  public async run(): Promise<AnyJson> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async run(): Promise<SetupResult> {
     const fileWriter = this.getFileWriter();
 
     checkNodeInstall();
     checkNpmInstall();
 
     if (!fs.existsSync(this.getPackageJsonPath())) {
-      throw new SfdxError(messages.getMessage('errorNoPackageJson'));
+      throw new SfError(messages.getMessage('errorNoPackageJson'));
     }
 
     // separate out functionality to easier mock out blocks in tests
@@ -65,7 +64,7 @@ export default class Setup extends SfdxCommand {
 
     this.ux.log(messages.getMessage('logSuccess'));
     return {
-      message: messages.getMessage('logSuccess')
+      message: messages.getMessage('logSuccess'),
     };
   }
 
@@ -74,11 +73,12 @@ export default class Setup extends SfdxCommand {
     return new FileWriter();
   }
 
-  private getPackageJsonPath() {
+  private getPackageJsonPath(): string {
     return path.join(this.project.getPath(), 'package.json');
   }
 
-  private getPackageJson() {
+  private getPackageJson(): { scripts: Record<string, string>; jest: string } {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return require(this.getPackageJsonPath());
   }
 
@@ -91,7 +91,7 @@ export default class Setup extends SfdxCommand {
       fileWriter.queueWrite(this.getPackageJsonPath(), JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts['test:unit'] && !scripts['test:unit:debug'] && !scripts['test:unit:watch']) {
       this.ux.log(messages.getMessage('logQueueScripts'));
-      packageJson.scripts = { ...scripts, ...testScripts};
+      packageJson.scripts = { ...scripts, ...testScripts };
       fileWriter.queueWrite(this.getPackageJsonPath(), JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
       this.ux.log(messages.getMessage('logSkippingScripts'));
@@ -130,39 +130,38 @@ export default class Setup extends SfdxCommand {
   private installLwcJest(): void {
     this.ux.log('Installing @salesforce/sfdx-lwc-jest node package...');
     try {
-      const yarnLockExists = fs.existsSync(path.join(this.project.getPath(), 'yarn.lock'));
-      if (yarnLockExists) {
+      if (fs.existsSync(path.join(this.project.getPath(), 'yarn.lock'))) {
         this.ux.log('Detected yarn.lock file, using yarn commands');
         execSync('yarn add --dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
       } else {
         execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
       }
     } catch (e) {
-      throw new SfdxError(messages.getMessage('errorLwcJestInstall', [e.message]));
+      throw new SfError(messages.getMessage('errorLwcJestInstall', [(e as Error).message]));
     }
   }
 }
 
-function checkNodeInstall() {
+function checkNodeInstall(): void {
   let nodeVersionRet: Buffer;
 
   try {
     nodeVersionRet = execSync('node -v');
   } catch {
-    throw new SfdxError(messages.getMessage('errorNodeNotFound'));
+    throw new SfError(messages.getMessage('errorNodeNotFound'));
   }
 
   const nodeVersion = nodeVersionRet.toString().slice(1); // strip the v from v8.12.0
   // semver-compare returns -1 if first param is lower than second, 0 if they're equal, 1 if first param is higher
   if (semverCompare(nodeVersion, '8.12.0') < 0) {
-    throw new SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
+    throw new SfError(messages.getMessage('errorNodeVersion', [nodeVersion]));
   }
 }
 
-function checkNpmInstall() {
+function checkNpmInstall(): void {
   try {
     execSync('npm -v');
   } catch {
-    throw new SfdxError(messages.getMessage('errorNpmNotFound'));
+    throw new SfError(messages.getMessage('errorNpmNotFound'));
   }
 }

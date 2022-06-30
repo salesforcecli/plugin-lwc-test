@@ -1,12 +1,5 @@
 {
-  "extension": [
-    ".ts"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.d.ts"
-  ],
-  "all": true
+  "nyc": {
+    "extends": "@salesforce/dev-config/nyc"
+  }
 }

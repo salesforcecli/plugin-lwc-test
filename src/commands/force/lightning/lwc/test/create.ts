@@ -1,14 +1,20 @@
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
- * SPDX-License-Identifier: MIT
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
+ * Licensed under the BSD 3-Clause license.
+ * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages, SfdxError } from '@salesforce/core';
-import { AnyJson } from '@salesforce/ts-types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { flags, SfdxCommand } from '@salesforce/command';
+import { Messages, SfError } from '@salesforce/core';
+
+export type CreateResult = {
+  message: string;
+  testPath: string;
+  className: string;
+  elementName: string;
+};
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'create');
@@ -16,32 +22,28 @@ const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'crea
 export default class Create extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
   public static longDescription = messages.getMessage('longDescription');
-
-  public static examples = [
-    messages.getMessage('example')
-  ];
-
+  public static examples = [messages.getMessage('example')];
+  protected static requiresProject = true;
   protected static flagsConfig = {
     filepath: flags.string({
       char: 'f',
       description: messages.getMessage('filepathFlagDescription'),
       longDescription: messages.getMessage('filepathFlagLongDescription'),
-      required: true
-    })
+      required: true,
+    }),
   };
 
-  protected static requiresProject = true;
-
-  public async run(): Promise<AnyJson> {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async run(): Promise<CreateResult> {
     const testDirName = '__tests__';
-    const filepath = this.flags.filepath;
+    const filepath = this.flags.filepath as string;
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
-      throw new SfdxError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
     }
     if (!fs.existsSync(modulePath)) {
-      throw new SfdxError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
     }
 
     const bundlePath = path.dirname(modulePath);
@@ -51,7 +53,7 @@ export default class Create extends SfdxCommand {
     const testName = `${moduleName}.test.js`;
     const testPath = path.join(testDirPath, testName);
     if (fs.existsSync(testPath)) {
-      throw new SfdxError(messages.getMessage('errorFileExists', [testPath]));
+      throw new SfError(messages.getMessage('errorFileExists', [testPath]));
     }
 
     const className = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
@@ -87,7 +89,7 @@ describe('${elementName}', () => {
       message: messages.getMessage('logSuccess', [testPath]),
       testPath,
       className,
-      elementName
+      elementName,
     };
   }
 }
