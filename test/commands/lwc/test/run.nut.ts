@@ -56,7 +56,7 @@ describe('lightning:lwc:test:run', () => {
     const output = execCmd<RunResult>('force:lightning:lwc:test:run', {
       ensureExitCode: 0,
     }).shellOutput.stderr;
-    expect(output).to.match(/Test Suites:\s+\d+ passed,\s+\d+\s+total/);
+    expect(output).to.match(/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/);
     expect(output).to.match(/Tests:\s+\d+\s+passed,\s+\d+\s+total/);
     expect(output).to.include('Snapshots:   0 total');
     expect(output).to.include('PASS');
