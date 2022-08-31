@@ -7,7 +7,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages, SfdxError } from '@salesforce/core';
 
 export type CreateResult = {
   message: string;
@@ -40,10 +40,10 @@ export default class Create extends SfdxCommand {
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
-      throw new SfError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
+      throw new SfdxError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
     }
     if (!fs.existsSync(modulePath)) {
-      throw new SfError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
+      throw new SfdxError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
     }
 
     const bundlePath = path.dirname(modulePath);
@@ -53,7 +53,7 @@ export default class Create extends SfdxCommand {
     const testName = `${moduleName}.test.js`;
     const testPath = path.join(testDirPath, testName);
     if (fs.existsSync(testPath)) {
-      throw new SfError(messages.getMessage('errorFileExists', [testPath]));
+      throw new SfdxError(messages.getMessage('errorFileExists', [testPath]));
     }
 
     const className = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);

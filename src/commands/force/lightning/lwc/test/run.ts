@@ -8,7 +8,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages, SfdxError } from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'run');
@@ -80,7 +80,7 @@ export default class Run extends SfdxCommand {
 
     const executablePath = path.join(projectPath, 'node_modules', nodeModulePath);
     if (!fs.existsSync(executablePath)) {
-      throw new SfError(messages.getMessage('errorNoExecutableFound'));
+      throw new SfdxError(messages.getMessage('errorNoExecutableFound'));
     }
     return executablePath;
   }

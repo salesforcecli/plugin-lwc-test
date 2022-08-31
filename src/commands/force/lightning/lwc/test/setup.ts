@@ -8,7 +8,7 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SfdxCommand } from '@salesforce/command';
-import { Messages, SfError } from '@salesforce/core';
+import { Messages, SfdxError } from '@salesforce/core';
 import semverCompare = require('semver-compare');
 import { FileWriter } from '../../../../../lib/fileWriter';
 
@@ -47,7 +47,7 @@ export default class Setup extends SfdxCommand {
     checkNpmInstall();
 
     if (!fs.existsSync(this.getPackageJsonPath())) {
-      throw new SfError(messages.getMessage('errorNoPackageJson'));
+      throw new SfdxError(messages.getMessage('errorNoPackageJson'));
     }
 
     // separate out functionality to easier mock out blocks in tests
@@ -137,7 +137,7 @@ export default class Setup extends SfdxCommand {
         execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
       }
     } catch (e) {
-      throw new SfError(messages.getMessage('errorLwcJestInstall', [(e as Error).message]));
+      throw new SfdxError(messages.getMessage('errorLwcJestInstall', [(e as Error).message]));
     }
   }
 }
@@ -148,13 +148,13 @@ function checkNodeInstall(): void {
   try {
     nodeVersionRet = execSync('node -v');
   } catch {
-    throw new SfError(messages.getMessage('errorNodeNotFound'));
+    throw new SfdxError(messages.getMessage('errorNodeNotFound'));
   }
 
   const nodeVersion = nodeVersionRet.toString().slice(1); // strip the v from v8.12.0
   // semver-compare returns -1 if first param is lower than second, 0 if they're equal, 1 if first param is higher
   if (semverCompare(nodeVersion, '8.12.0') < 0) {
-    throw new SfError(messages.getMessage('errorNodeVersion', [nodeVersion]));
+    throw new SfdxError(messages.getMessage('errorNodeVersion', [nodeVersion]));
   }
 }
 
@@ -162,6 +162,6 @@ function checkNpmInstall(): void {
   try {
     execSync('npm -v');
   } catch {
-    throw new SfError(messages.getMessage('errorNpmNotFound'));
+    throw new SfdxError(messages.getMessage('errorNpmNotFound'));
   }
 }

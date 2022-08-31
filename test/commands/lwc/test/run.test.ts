@@ -104,7 +104,7 @@ describe('force:lightning:lwc:test:run', () => {
     .command(['force:lightning:lwc:test:run', '--watch', '--debug'])
     .it('errors when watch and debug flag set', (ctx) => {
       // update for OCLIF exclusive error message
-      expect(ctx.stderr).to.contain('--watch= cannot also be provided when using --debug=');
+      expect(ctx.stderr).to.contain('--debug=true cannot also be provided when using --watch');
     });
 
   test
