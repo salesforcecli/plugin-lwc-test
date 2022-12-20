@@ -8,16 +8,28 @@ import * as crypto from 'crypto';
 import * as fs from 'fs';
 import signalExit = require('signal-exit');
 
+type WriteQueueItem = {
+  filepath: string;
+  content: string | Uint8Array;
+  options?: fs.WriteFileOptions;
+}
+
+type AppendQueueItem = {
+  filepath: string;
+  toAppend: string | Uint8Array;
+  options?: fs.WriteFileOptions;
+}
+
 export class FileWriter {
   /*
    * Queue of files to write. May be a new file or replace an existing one.
    */
-  private writeQueue = [];
+  private writeQueue: WriteQueueItem[] = [];
 
   /*
    * Queue of files to append data to.
    */
-  private appendQueue = [];
+  private appendQueue: AppendQueueItem[] = [];
 
   /*
    * An object mapping filenames to their temporary copy. We use the temp copy to
@@ -30,7 +42,7 @@ export class FileWriter {
   /*
    * Save references to new files created so that if we need to revert back to our original state we know to remove these.
    */
-  private newFiles = [];
+  private newFiles: string[] = [];
 
   public constructor() {
     // nothing to construct

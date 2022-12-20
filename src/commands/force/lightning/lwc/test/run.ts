@@ -8,7 +8,7 @@ import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages, SfError } from '@salesforce/core';
+import {Messages, SfError, SfProject} from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'run');
@@ -38,10 +38,11 @@ export default class Run extends SfdxCommand {
       exclusive: ['debug'],
     }),
   };
+  protected project: SfProject; // requiresProject is true
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<RunResult> {
-    const args = [];
+    const args: string[] = [];
 
     if (this.flags.debug) {
       args.push('--debug');
@@ -54,10 +55,11 @@ export default class Run extends SfdxCommand {
 
     const scriptRet = this.runJest(args);
 
-    this.ux.log(messages.getMessage('logSuccess', [scriptRet.status.toString()]));
+    const status = scriptRet.status ?? -1
+    this.ux.log(messages.getMessage('logSuccess', [status.toString()]));
     return {
-      message: messages.getMessage('logSuccess', [scriptRet.status.toString()]),
-      jestExitCode: scriptRet.status,
+      message: messages.getMessage('logSuccess', [status.toString()]),
+      jestExitCode: status
     };
   }
 

@@ -8,7 +8,7 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SfdxCommand } from '@salesforce/command';
-import { Messages, SfError } from '@salesforce/core';
+import {Messages, SfError, SfProject} from '@salesforce/core';
 import semverCompare = require('semver-compare');
 import { FileWriter } from '../../../../../lib/fileWriter';
 
@@ -38,6 +38,7 @@ export default class Setup extends SfdxCommand {
   public static longDescription = messages.getMessage('longDescription');
   public static examples = [messages.getMessage('example')];
   protected static requiresProject = true;
+  protected project: SfProject;// requiresProject is true
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<SetupResult> {
