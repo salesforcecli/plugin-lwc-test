@@ -31,6 +31,9 @@ describe('lightning:lwc:test:setup', () => {
   });
 
   it("writes files, writes scripts if they don't exist", async () => {
+    if (!testSession.project) {
+      throw new Error(`Expected project: ${testSession.project}`);
+    }
     const pjsonPath = path.join(testSession.project.dir, 'package.json');
     const jestConfigPath = path.join(testSession.project.dir, 'jest.config.js');
     const forceignorePath = path.join(testSession.project.dir, '.forceignore');

@@ -18,6 +18,9 @@ describe('lightning:lwc:test:create', () => {
     testSession = await TestSession.create({
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
     });
+    if (!testSession.project) {
+      throw new Error(`Expected project: ${testSession.project}`);
+    }
     testDir = path.join(testSession.project.dir, 'force-app', 'main', 'default', 'lwc', 'brokerCard');
   });
 
@@ -35,6 +38,9 @@ describe('lightning:lwc:test:create', () => {
         ensureExitCode: 0,
       }
     ).jsonOutput;
+    if (!output) {
+      throw new Error(`Expected output: ${output}`);
+    }
     expect(output.status).to.equal(0);
     expect(output.result.testPath).to.include(path.join(testDir, '__tests__', 'brokerCard.test.js'));
     expect(output.result.className).to.equal('BrokerCard');
