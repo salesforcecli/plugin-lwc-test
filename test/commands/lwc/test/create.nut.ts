@@ -12,7 +12,7 @@ import { CreateResult } from '../../../../src/commands/force/lightning/lwc/test/
 
 describe('lightning:lwc:test:create', () => {
   let testSession: TestSession;
-  let testDir;
+  let testDir: string;
 
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
@@ -35,11 +35,11 @@ describe('lightning:lwc:test:create', () => {
         ensureExitCode: 0,
       }
     ).jsonOutput;
-    expect(output.status).to.equal(0);
-    expect(output.result.testPath).to.include(path.join(testDir, '__tests__', 'brokerCard.test.js'));
-    expect(output.result.className).to.equal('BrokerCard');
-    expect(output.result.message).to.include('Test case successfully created:');
-    expect(output.result.elementName).to.equal('c-broker-card');
+    expect(output?.status).to.equal(0);
+    expect(output?.result.testPath).to.include(path.join(testDir, '__tests__', 'brokerCard.test.js'));
+    expect(output?.result.className).to.equal('BrokerCard');
+    expect(output?.result.message).to.include('Test case successfully created:');
+    expect(output?.result.elementName).to.equal('c-broker-card');
   });
 
   it('creates a __tests__ directory for the given lwc (human)', () => {
