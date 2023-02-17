@@ -30,7 +30,6 @@ export default class Run extends SfCommand<RunResult> {
       char: 'd',
       summary: messages.getMessage('debugFlagDescription'),
       description: messages.getMessage('debugFlagLongDescription'),
-      exclusive: ['watch'],
     }),
     watch: Flags.boolean({
       summary: messages.getMessage('watchFlagDescription'),

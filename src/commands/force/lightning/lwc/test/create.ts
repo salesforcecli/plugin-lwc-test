@@ -25,7 +25,7 @@ export default class Create extends SfCommand<CreateResult> {
   public static readonly examples = messages.getMessages('example');
   public static readonly requiresProject = true;
   public static readonly flags = {
-    filepath: Flags.string({
+    filepath: Flags.file({
       char: 'f',
       summary: messages.getMessage('filepathFlagDescription'),
       description: messages.getMessage('filepathFlagLongDescription'),
