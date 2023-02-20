@@ -21,9 +21,9 @@ describe('lightning:lwc:test:run', () => {
 
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
-      setupCommands: ['sfdx force:lightning:lwc:test:setup'],
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
     });
+    execCmd('force:lightning:lwc:test:setup', { ensureExitCode: 0 });
     // I'm not sure why this test started failing
     // I was unable to reproduce it locally, even in the generated test_session directory
     fs.rmSync(
@@ -48,8 +48,8 @@ describe('lightning:lwc:test:run', () => {
     const output = execCmd<RunResult>('force:lightning:lwc:test:run --json', {
       ensureExitCode: 0,
     }).jsonOutput;
-    expect(output.result.message).to.equal('Test run complete. Exited with status code: 0');
-    expect(output.result.jestExitCode).to.equal(0);
+    expect(output?.result.message).to.equal('Test run complete. Exited with status code: 0');
+    expect(output?.result.jestExitCode).to.equal(0);
   });
 
   it('runs the tests (human)', () => {

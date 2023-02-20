@@ -6,8 +6,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { flags, SfdxCommand } from '@salesforce/command';
 import { Messages, SfError } from '@salesforce/core';
+import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 
 export type CreateResult = {
   message: string;
@@ -19,31 +19,33 @@ export type CreateResult = {
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'create');
 
-export default class Create extends SfdxCommand {
-  public static description = messages.getMessage('commandDescription');
-  public static longDescription = messages.getMessage('longDescription');
-  public static examples = [messages.getMessage('example')];
-  protected static requiresProject = true;
-  protected static flagsConfig = {
-    filepath: flags.string({
+export default class Create extends SfCommand<CreateResult> {
+  public static readonly summary = messages.getMessage('commandDescription');
+  public static readonly description = messages.getMessage('longDescription');
+  public static readonly examples = messages.getMessages('example');
+  public static readonly requiresProject = true;
+  public static readonly flags = {
+    filepath: Flags.file({
       char: 'f',
-      description: messages.getMessage('filepathFlagDescription'),
-      longDescription: messages.getMessage('filepathFlagLongDescription'),
+      summary: messages.getMessage('filepathFlagDescription'),
+      description: messages.getMessage('filepathFlagLongDescription'),
       required: true,
     }),
+    loglevel,
   };
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<CreateResult> {
+    const { flags } = await this.parse(Create);
     const testDirName = '__tests__';
-    const filepath = this.flags.filepath as string;
+    const filepath = flags.filepath;
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
-      throw new SfError(messages.getMessage('errorFileNotJs', [this.flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotJs', [flags.filepath]));
     }
     if (!fs.existsSync(modulePath)) {
-      throw new SfError(messages.getMessage('errorFileNotFound', [this.flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotFound', [flags.filepath]));
     }
 
     const bundlePath = path.dirname(modulePath);
@@ -84,7 +86,7 @@ describe('${elementName}', () => {
     }
     fs.writeFileSync(testPath, testSuiteTemplate);
 
-    this.ux.log(messages.getMessage('logSuccess', [testPath]));
+    this.log(messages.getMessage('logSuccess', [testPath]));
     return {
       message: messages.getMessage('logSuccess', [testPath]),
       testPath,

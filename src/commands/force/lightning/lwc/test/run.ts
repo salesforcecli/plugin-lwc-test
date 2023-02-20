@@ -7,8 +7,9 @@
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { flags, SfdxCommand } from '@salesforce/command';
-import { Messages, SfError } from '@salesforce/core';
+import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
+import { Messages } from '@salesforce/core';
+import { Args } from '@oclif/core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'run');
@@ -18,46 +19,46 @@ export type RunResult = {
   jestExitCode: number;
 };
 
-export default class Run extends SfdxCommand {
-  public static description = messages.getMessage('commandDescription');
-  public static longDescription = messages.getMessage('longDescription');
-  public static examples = [messages.getMessage('example1'), messages.getMessage('example2')];
-  public static args = [{ name: 'passthrough' }];
-  // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-  protected static requiresProject = true;
-  protected static flagsConfig = {
-    debug: flags.boolean({
+export default class Run extends SfCommand<RunResult> {
+  public static readonly summary = messages.getMessage('commandDescription');
+  public static readonly description = messages.getMessage('longDescription');
+  public static readonly examples = messages.getMessages('examples');
+  public static readonly requiresProject = true;
+  public static args = { passthrough: Args.string({ description: 'passthrough arg' }) };
+  public static readonly flags = {
+    debug: Flags.boolean({
       char: 'd',
-      description: messages.getMessage('debugFlagDescription'),
-      longDescription: messages.getMessage('debugFlagLongDescription'),
-      exclusive: ['watch'],
+      summary: messages.getMessage('debugFlagDescription'),
+      description: messages.getMessage('debugFlagLongDescription'),
     }),
-    watch: flags.boolean({
-      description: messages.getMessage('watchFlagDescription'),
-      longDescription: messages.getMessage('watchFlagLongDescription'),
+    watch: Flags.boolean({
+      summary: messages.getMessage('watchFlagDescription'),
+      description: messages.getMessage('watchFlagLongDescription'),
       exclusive: ['debug'],
     }),
+    loglevel,
   };
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<RunResult> {
-    const args = [];
+    const { args, flags } = await this.parse(Run);
+    const addArgs: string[] = [];
 
-    if (this.flags.debug) {
-      args.push('--debug');
-    } else if (this.flags.watch) {
-      args.push('--watch');
+    if (flags.debug) {
+      addArgs.push('--debug');
+    } else if (flags.watch) {
+      addArgs.push('--watch');
     }
-    if (this.args.passthrough) {
-      args.push(this.args.passthrough);
+    if (args.passthrough) {
+      addArgs.push(args.passthrough);
     }
 
-    const scriptRet = this.runJest(args);
+    const scriptRet = this.runJest(addArgs);
 
-    this.ux.log(messages.getMessage('logSuccess', [scriptRet.status.toString()]));
+    this.log(messages.getMessage('logSuccess', [scriptRet.status?.toString()]));
     return {
-      message: messages.getMessage('logSuccess', [scriptRet.status.toString()]),
-      jestExitCode: scriptRet.status,
+      message: messages.getMessage('logSuccess', [scriptRet.status?.toString()]),
+      jestExitCode: scriptRet.status ?? 1,
     };
   }
 
@@ -80,7 +81,7 @@ export default class Run extends SfdxCommand {
 
     const executablePath = path.join(projectPath, 'node_modules', nodeModulePath);
     if (!fs.existsSync(executablePath)) {
-      throw new SfError(messages.getMessage('errorNoExecutableFound'));
+      throw messages.createError('errorNoExecutableFound', [this.config.bin]);
     }
     return executablePath;
   }

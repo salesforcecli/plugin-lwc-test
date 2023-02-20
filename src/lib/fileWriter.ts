@@ -12,12 +12,12 @@ export class FileWriter {
   /*
    * Queue of files to write. May be a new file or replace an existing one.
    */
-  private writeQueue = [];
+  private writeQueue: Array<{ filepath: string; content: string | Uint8Array; options?: fs.WriteFileOptions }> = [];
 
   /*
    * Queue of files to append data to.
    */
-  private appendQueue = [];
+  private appendQueue: Array<{ filepath: string; toAppend: string | Uint8Array; options?: fs.WriteFileOptions }> = [];
 
   /*
    * An object mapping filenames to their temporary copy. We use the temp copy to
@@ -25,12 +25,12 @@ export class FileWriter {
    * occur, all previous files that were modified are replaced with the
    * original content saved to the temp file.
    */
-  private tmpFilelist = {};
+  private tmpFilelist: Record<string, string> = {};
 
   /*
    * Save references to new files created so that if we need to revert back to our original state we know to remove these.
    */
-  private newFiles = [];
+  private newFiles: string[] = [];
 
   public constructor() {
     // nothing to construct
@@ -57,30 +57,26 @@ export class FileWriter {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
     const removeExitHandler = signalExit(cleanup);
     try {
-      this.appendQueue.forEach(
-        (item: { filepath: string; toAppend: string | Uint8Array; options: fs.WriteFileOptions }) => {
-          const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
-          if (!fs.existsSync(item.filepath)) {
-            throw new Error('Attempting to append to file that does not exist: ' + item.filepath);
-          }
+      this.appendQueue.forEach((item) => {
+        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
+        if (!fs.existsSync(item.filepath)) {
+          throw new Error('Attempting to append to file that does not exist: ' + item.filepath);
+        }
+        fs.copyFileSync(item.filepath, tmpFilename);
+        this.tmpFilelist[item.filepath] = tmpFilename;
+        fs.appendFileSync(item.filepath, item.toAppend, item.options);
+      });
+
+      this.writeQueue.forEach((item) => {
+        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
+        if (fs.existsSync(item.filepath)) {
           fs.copyFileSync(item.filepath, tmpFilename);
           this.tmpFilelist[item.filepath] = tmpFilename;
-          fs.appendFileSync(item.filepath, item.toAppend, item.options);
+        } else {
+          this.newFiles.push(item.filepath);
         }
-      );
-
-      this.writeQueue.forEach(
-        (item: { filepath: string; content: string | Uint8Array; options: fs.WriteFileOptions }) => {
-          const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
-          if (fs.existsSync(item.filepath)) {
-            fs.copyFileSync(item.filepath, tmpFilename);
-            this.tmpFilelist[item.filepath] = tmpFilename;
-          } else {
-            this.newFiles.push(item.filepath);
-          }
-          fs.writeFileSync(item.filepath, item.content, item.options);
-        }
-      );
+        fs.writeFileSync(item.filepath, item.content, item.options);
+      });
       // things worked fine so remove handler and only remove temp files
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       removeExitHandler();

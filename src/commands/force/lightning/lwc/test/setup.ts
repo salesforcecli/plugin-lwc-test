@@ -7,7 +7,7 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { SfdxCommand } from '@salesforce/command';
+import { loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { Messages, SfError } from '@salesforce/core';
 import semverCompare = require('semver-compare');
 import { FileWriter } from '../../../../../lib/fileWriter';
@@ -33,14 +33,17 @@ export type SetupResult = {
 
 const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 
-export default class Setup extends SfdxCommand {
-  public static description = messages.getMessage('commandDescription');
-  public static longDescription = messages.getMessage('longDescription');
-  public static examples = [messages.getMessage('example')];
-  protected static requiresProject = true;
+export default class Setup extends SfCommand<SetupResult> {
+  public static readonly summary = messages.getMessage('commandDescription');
+  public static readonly description = messages.getMessage('commandDescription');
+  public static readonly examples = messages.getMessages('examples');
+  public static readonly requiresProject = true;
+  public static readonly flags = {
+    loglevel,
+  };
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<SetupResult> {
+    await this.parse(Setup);
     const fileWriter = this.getFileWriter();
 
     checkNodeInstall();
@@ -55,17 +58,17 @@ export default class Setup extends SfdxCommand {
     this.addJestConfig(fileWriter);
     this.updateForceIgnore(fileWriter);
 
-    this.ux.log(messages.getMessage('logFileUpdatesStart'));
+    this.log(messages.getMessage('logFileUpdatesStart'));
     fileWriter.writeFiles();
-    this.ux.log('logFileUpdatesEnd');
+    this.log('logFileUpdatesEnd');
 
     // do this as the last step because it is hard to revert if experience an error from anything above
     this.installLwcJest();
 
-    this.ux.log(messages.getMessage('logSuccess'));
-    return {
+    this.log(messages.getMessage('logSuccess'));
+    return Promise.resolve({
       message: messages.getMessage('logSuccess'),
-    };
+    });
   }
 
   // pull out to own method for testability
@@ -87,14 +90,14 @@ export default class Setup extends SfdxCommand {
     const scripts = packageJson.scripts;
     if (!scripts) {
       packageJson.scripts = testScripts;
-      this.ux.log(messages.getMessage('logQueueScripts'));
+      this.log(messages.getMessage('logQueueScripts'));
       fileWriter.queueWrite(this.getPackageJsonPath(), JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else if (!scripts['test:unit'] && !scripts['test:unit:debug'] && !scripts['test:unit:watch']) {
-      this.ux.log(messages.getMessage('logQueueScripts'));
+      this.log(messages.getMessage('logQueueScripts'));
       packageJson.scripts = { ...scripts, ...testScripts };
       fileWriter.queueWrite(this.getPackageJsonPath(), JSON.stringify(packageJson, null, 2), { encoding: 'utf8' });
     } else {
-      this.ux.log(messages.getMessage('logSkippingScripts'));
+      this.log(messages.getMessage('logSkippingScripts'));
     }
   }
 
@@ -103,12 +106,12 @@ export default class Setup extends SfdxCommand {
     const jestConfigPath = path.join(this.project.getPath(), 'jest.config.js');
     const packageJsonJest = packageJson.jest;
     if (packageJsonJest) {
-      this.ux.log(messages.getMessage('logConfigInPackageJson'));
+      this.log(messages.getMessage('logConfigInPackageJson'));
     } else if (fs.existsSync(jestConfigPath)) {
-      this.ux.log(messages.getMessage('logConfigInJestConfigJs'));
+      this.log(messages.getMessage('logConfigInJestConfigJs'));
     } else {
       // no known existing Jest config present in workspace
-      this.ux.log(messages.getMessage('logQueueConfig'));
+      this.log(messages.getMessage('logQueueConfig'));
       fileWriter.queueWrite(jestConfigPath, jestConfig);
     }
   }
@@ -116,22 +119,22 @@ export default class Setup extends SfdxCommand {
   private updateForceIgnore(fileWriter: FileWriter): void {
     const forceignorePath = path.join(this.project.getPath(), '.forceignore');
     if (!fs.existsSync(forceignorePath)) {
-      this.ux.log(messages.getMessage('logQueueForceignoreAdd'));
+      this.log(messages.getMessage('logQueueForceignoreAdd'));
       fileWriter.queueWrite(forceignorePath, forceignoreEntry);
     } else {
       const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
       if (forceignore.indexOf('**/__tests__/**') === -1) {
-        this.ux.log('logQueueForceignoreModify');
+        this.log('logQueueForceignoreModify');
         fileWriter.queueAppend(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
       }
     }
   }
 
   private installLwcJest(): void {
-    this.ux.log('Installing @salesforce/sfdx-lwc-jest node package...');
+    this.log('Installing @salesforce/sfdx-lwc-jest node package...');
     try {
       if (fs.existsSync(path.join(this.project.getPath(), 'yarn.lock'))) {
-        this.ux.log('Detected yarn.lock file, using yarn commands');
+        this.log('Detected yarn.lock file, using yarn commands');
         execSync('yarn add --dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
       } else {
         execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
