@@ -9,7 +9,7 @@ import * as path from 'path';
 import { Messages, SfError } from '@salesforce/core';
 import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 
-export type CreateResult = {
+export type GenerateResult = {
   message: string;
   testPath: string;
   className: string;
@@ -19,26 +19,30 @@ export type CreateResult = {
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'create');
 
-export default class Create extends SfCommand<CreateResult> {
+export default class GenerateTest extends SfCommand<GenerateResult> {
   public static readonly summary = messages.getMessage('commandDescription');
   public static readonly description = messages.getMessage('longDescription');
   public static readonly examples = messages.getMessages('example');
   public static readonly requiresProject = true;
+  public static readonly deprecateAliases = true;
+  public static readonly aliases = ['force:lightning:lwc:test:create'];
   public static readonly flags = {
-    filepath: Flags.file({
+    file: Flags.file({
       char: 'f',
       summary: messages.getMessage('filepathFlagDescription'),
       description: messages.getMessage('filepathFlagLongDescription'),
       required: true,
+      deprecateAliases: true,
+      aliases: ['filepath'],
     }),
     loglevel,
   };
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async run(): Promise<CreateResult> {
-    const { flags } = await this.parse(Create);
+  public async run(): Promise<GenerateResult> {
+    const { flags } = await this.parse(GenerateTest);
     const testDirName = '__tests__';
-    const filepath = flags.filepath;
+    const filepath = flags.file;
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {

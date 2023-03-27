@@ -10,7 +10,7 @@ import * as path from 'path';
 import { loglevel, SfCommand } from '@salesforce/sf-plugins-core';
 import { Messages, SfError } from '@salesforce/core';
 import semverCompare = require('semver-compare');
-import { FileWriter } from '../../../../../lib/fileWriter';
+import { FileWriter } from '../../../../lib/fileWriter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'setup');
@@ -33,17 +33,19 @@ export type SetupResult = {
 
 const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 
-export default class Setup extends SfCommand<SetupResult> {
+export default class SetupTest extends SfCommand<SetupResult> {
   public static readonly summary = messages.getMessage('commandDescription');
   public static readonly description = messages.getMessage('commandDescription');
   public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
+  public static readonly deprecateAliases = true;
+  public static readonly aliases = ['force:lightning:lwc:test:setup'];
   public static readonly flags = {
     loglevel,
   };
 
   public async run(): Promise<SetupResult> {
-    await this.parse(Setup);
+    await this.parse(SetupTest);
     const fileWriter = this.getFileWriter();
 
     checkNodeInstall();
