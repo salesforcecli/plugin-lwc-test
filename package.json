@@ -28,7 +28,7 @@
     "@types/shelljs": "^0.8.11",
     "@types/signal-exit": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
-    "@typescript-eslint/parser": "^5.52.0",
+    "@typescript-eslint/parser": "^5.57.0",
     "chai": "^4.3.7",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
