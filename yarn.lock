@@ -790,10 +790,10 @@
     widest-line "^3.1.0"
     wrap-ansi "^7.0.0"
 
-"@oclif/core@^2.1.2", "@oclif/core@^2.1.6", "@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.5.1.tgz#0a45b050426fd9b650b70ef53cfc46bb6f6b1a18"
-  integrity sha512-5s+SbsffV3XQ5pgv7h8/iLF116TfCLwsu9+/rZXEWypgsfvR8Z6anzVpbpGJxIYWHl9XLrm/viCwZVp3WtbnlQ==
+"@oclif/core@^2.1.2", "@oclif/core@^2.1.6", "@oclif/core@^2.3.0", "@oclif/core@^2.4.0", "@oclif/core@^2.5.1", "@oclif/core@^2.7.1":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.8.0.tgz#4948de3168804169fa68895af8ec4853f332b307"
+  integrity sha512-A2wHItFrD/WOw5bJ6Mtv9MD7If0bsKNR0pwEY0me+fo4HSXlJOtgYGqmzb8t8akX3DUUT7XsjPajsoHLkIJyvg==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
@@ -819,6 +819,7 @@
     strip-ansi "^6.0.1"
     supports-color "^8.1.1"
     supports-hyperlinks "^2.2.0"
+    ts-node "^10.9.1"
     tslib "^2.5.0"
     widest-line "^3.1.0"
     wordwrap "^1.0.0"
@@ -895,12 +896,12 @@
     chalk "^4.1.0"
     tslib "^2.5.0"
 
-"@oclif/plugin-command-snapshot@^3.3.8":
-  version "3.3.8"
-  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.3.8.tgz#4ef6c9b0461b40c4be1f94977e5eb9dd6c756081"
-  integrity sha512-piYlSDDzldDkvToKEG8HCnYaBwpWIX0b2TNc9ZtmH2khVgwPvmMrfZQfLl/4ZXxobdk0ndgrUUIg0mOhgCAXgg==
+"@oclif/plugin-command-snapshot@^3.3.10":
+  version "3.3.10"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-command-snapshot/-/plugin-command-snapshot-3.3.10.tgz#870b9c2107890d6a31360da02e7f568d8bdb658a"
+  integrity sha512-KVDa2WWP5NCbKgqFyV8XOW4m9ynKofTQILXETnimv/aUI6LfcCADB1543v3OXnMbDbDlA7ypc6KATlsPCMuvsw==
   dependencies:
-    "@oclif/core" "^2.4.0"
+    "@oclif/core" "^2.7.1"
     chalk "^4.1.2"
     just-diff "^5.2.0"
     lodash "^4.17.21"
