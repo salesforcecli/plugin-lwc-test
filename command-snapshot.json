@@ -1,20 +1,20 @@
 [
   {
-    "command": "force:lightning:lwc:test:create",
+    "command": "lightning:generate:lwc:test",
     "plugin": "@salesforce/sfdx-plugin-lwc-test",
-    "flags": ["filepath", "json", "loglevel"],
-    "alias": []
+    "flags": ["file", "json", "loglevel"],
+    "alias": ["force:lightning:lwc:test:create"]
   },
   {
-    "command": "force:lightning:lwc:test:run",
+    "command": "lightning:run:lwc:test",
     "plugin": "@salesforce/sfdx-plugin-lwc-test",
     "flags": ["debug", "json", "loglevel", "watch"],
-    "alias": []
+    "alias": ["force:lightning:lwc:test:run"]
   },
   {
-    "command": "force:lightning:lwc:test:setup",
+    "command": "lightning:setup:lwc:test",
     "plugin": "@salesforce/sfdx-plugin-lwc-test",
     "flags": ["json", "loglevel"],
-    "alias": []
+    "alias": ["force:lightning:lwc:test:setup"]
   }
 ]

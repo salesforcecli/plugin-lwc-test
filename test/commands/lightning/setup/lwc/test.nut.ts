@@ -8,9 +8,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { SetupResult } from '../../../../src/commands/force/lightning/lwc/test/setup';
+import { GenerateResult } from '../../../../../src/commands/lightning/generate/lwc/test';
 
-describe('lightning:lwc:test:setup', () => {
+describe('lightning:setup:lwc:test', () => {
   let testSession: TestSession;
 
   before('prepare session and ensure environment variables', async () => {
@@ -24,7 +24,7 @@ describe('lightning:lwc:test:setup', () => {
   });
 
   it('runs the setup command (human)', () => {
-    const output = execCmd<SetupResult>('force:lightning:lwc:test:setup', {
+    const output = execCmd<GenerateResult>('lightning:setup:lwc:test', {
       ensureExitCode: 0,
     }).shellOutput;
     expect(output).to.include('Test setup complete.');
@@ -44,7 +44,7 @@ describe('lightning:lwc:test:setup', () => {
     fs.rmSync(jestConfigPath);
     fs.rmSync(forceignorePath);
 
-    const output = execCmd<SetupResult>('force:lightning:lwc:test:setup', {
+    const output = execCmd<GenerateResult>('lightning:setup:lwc:test', {
       ensureExitCode: 0,
     }).shellOutput;
 

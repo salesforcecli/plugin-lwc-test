@@ -31,7 +31,7 @@ Runs tests when a watched file changes. Watched files include the component unde
 # errorNoExecutableFound
 
 No sfdx-lwc-jest executable found. Verify it is properly installed.
-Run "%s force:lightning:lwc:test:setup --help" for installation details.
+Run "%s lightning:setup:lwc:test --help" for installation details.
 
 # logSuccess
 

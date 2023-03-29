@@ -14,7 +14,7 @@ import { TestContext } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
 import { SfProject } from '@salesforce/core';
-import Setup from '../../../../src/commands/force/lightning/lwc/test/setup';
+import SetupTest from '../../../../../src/commands/lightning/setup/lwc/test';
 
 const VALID_NODE_VERSION_STDOUT = 'v8.12.0\n';
 const VALID_NPM_VERSION_STDOUT = 'v6.0.0\n';
@@ -47,18 +47,18 @@ function setupProject(setup: (project: SfProject) => void = () => {}) {
   return project;
 }
 
-class SetupTest extends Setup {
+class MySetupTest extends SetupTest {
   public constructor(args: string[], config: Config) {
     super(args, config);
     this.project = setupProject();
   }
 }
 
-describe('force:lightning:lwc:test:setup', () => {
+describe('lightning:setup:test', () => {
   // Mock all things in core, like api, file io, etc.
   const $$ = new TestContext();
 
-  let setup: SetupTest;
+  let setup: MySetupTest;
 
   const fileWriterStub = {
     queueWrite: sinon.stub(),
@@ -79,7 +79,7 @@ describe('force:lightning:lwc:test:setup', () => {
           throw new Error('Invalid command: node -v');
         }
       });
-      setup = new SetupTest([], {} as Config);
+      setup = new MySetupTest([], {} as Config);
       try {
         await setup.run();
       } catch (e) {
@@ -93,7 +93,7 @@ describe('force:lightning:lwc:test:setup', () => {
           return 'v6.17.0\n';
         }
       });
-      setup = new SetupTest([], {} as Config);
+      setup = new MySetupTest([], {} as Config);
       try {
         await setup.run();
       } catch (e) {
@@ -110,7 +110,7 @@ describe('force:lightning:lwc:test:setup', () => {
           throw new Error('Invalid command: npm -v');
         }
       });
-      setup = new SetupTest([], {} as Config);
+      setup = new MySetupTest([], {} as Config);
       try {
         await setup.run();
       } catch (e) {
@@ -127,7 +127,7 @@ describe('force:lightning:lwc:test:setup', () => {
           return VALID_NPM_VERSION_STDOUT;
         }
       });
-      setup = new SetupTest([], {} as Config);
+      setup = new MySetupTest([], {} as Config);
       try {
         await setup.run();
       } catch (e) {
@@ -151,15 +151,15 @@ describe('force:lightning:lwc:test:setup', () => {
         .withArgs(sinon.match(/.*?package\.json$/))
         .returns(true);
       (fs.existsSync as SinonStub).callThrough();
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
       // this stub is key. we have a package.json but no "scripts" section
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson').returns({
         name: 'no test scripts',
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
-      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       // first param is the path, just make sure this is the package.json write
@@ -182,17 +182,17 @@ describe('force:lightning:lwc:test:setup', () => {
         .withArgs(sinon.match(/.*?package\.json$/))
         .returns(true);
       (fs.existsSync as SinonStub).callThrough();
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson').returns({
         name: 'from test',
         scripts: {
           foo: 'bar',
         },
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
-      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       // first param is the path, just make sure this is the package.json write
@@ -215,17 +215,17 @@ describe('force:lightning:lwc:test:setup', () => {
         .withArgs(sinon.match(/.*?package\.json$/))
         .returns(true);
       (fs.existsSync as SinonStub).callThrough();
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson').returns({
         name: 'from test',
         scripts: {
           'test:unit': 'bar',
         },
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
-      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueWrite.called).to.equal(false);
@@ -247,17 +247,17 @@ describe('force:lightning:lwc:test:setup', () => {
         .withArgs(sinon.match(/.*?package\.json$/))
         .returns(true);
       (fs.existsSync as SinonStub).callThrough();
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson').returns({
         name: 'from test',
         jest: {
           verbose: true,
         },
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueWrite.called).to.equal(false);
@@ -281,14 +281,14 @@ describe('force:lightning:lwc:test:setup', () => {
 
       (fs.existsSync as SinonStub).callThrough();
 
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson').returns({
         name: 'from test',
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueWrite.called).to.equal(false);
@@ -310,14 +310,14 @@ describe('force:lightning:lwc:test:setup', () => {
         .withArgs(sinon.match(sinon.match(/.*jest.config.js$/)))
         .returns(false);
       (fs.existsSync as SinonStub).callThrough();
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson').returns({
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson').returns({
         name: 'from test',
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'updateForceIgnore');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updateForceIgnore');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('jest.config.js');
@@ -344,12 +344,12 @@ describe('force:lightning:lwc:test:setup', () => {
         .withArgs(sinon.match(sinon.match(/.*forceignore.*/)))
         .returns(false);
       (fs.existsSync as SinonStub).callThrough();
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
-      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueWrite.args[0][0]).to.contain('.forceignore');
@@ -378,12 +378,12 @@ describe('force:lightning:lwc:test:setup', () => {
         }
         return '';
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
-      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueAppend.args[0][0]).to.contain('.forceignore');
@@ -412,12 +412,12 @@ describe('force:lightning:lwc:test:setup', () => {
         }
         return '';
       });
-      stubMethod($$.SANDBOX, Setup.prototype, 'getFileWriter').returns(fileWriterStub);
-      stubMethod($$.SANDBOX, Setup.prototype, 'updatePackageJsonScripts');
-      stubMethod($$.SANDBOX, Setup.prototype, 'getPackageJson');
-      stubMethod($$.SANDBOX, Setup.prototype, 'addJestConfig');
-      stubMethod($$.SANDBOX, Setup.prototype, 'installLwcJest');
-      setup = new SetupTest([], {} as Config);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getFileWriter').returns(fileWriterStub);
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'updatePackageJsonScripts');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'getPackageJson');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'addJestConfig');
+      stubMethod($$.SANDBOX, SetupTest.prototype, 'installLwcJest');
+      setup = new MySetupTest([], {} as Config);
       await setup.run();
 
       expect(fileWriterStub.queueWrite.called).to.equal(false);

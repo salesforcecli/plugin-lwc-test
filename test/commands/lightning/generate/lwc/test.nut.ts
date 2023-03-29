@@ -8,9 +8,9 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { CreateResult } from '../../../../src/commands/force/lightning/lwc/test/create';
+import { GenerateResult } from '../../../../../src/commands/lightning/generate/lwc/test';
 
-describe('lightning:lwc:test:create', () => {
+describe('lightning:generate:lwc:test', () => {
   let testSession: TestSession;
   let testDir: string;
 
@@ -29,8 +29,8 @@ describe('lightning:lwc:test:create', () => {
     // first, delete the lwc test
     fs.rmSync(path.join(testDir, '__tests__'), { recursive: true });
 
-    const output = execCmd<CreateResult>(
-      `force:lightning:lwc:test:create -f ${path.join(testDir, 'brokerCard.js')} --json`,
+    const output = execCmd<GenerateResult>(
+      `lightning:generate:lwc:test -f ${path.join(testDir, 'brokerCard.js')} --json`,
       {
         ensureExitCode: 0,
       }
@@ -42,19 +42,22 @@ describe('lightning:lwc:test:create', () => {
     expect(output?.result.elementName).to.equal('c-broker-card');
   });
 
-  it('creates a __tests__ directory for the given lwc (human)', () => {
+  it('creates a __tests__ directory for the given lwc (human)(cmd alias)', () => {
     // first, delete the lwc test
     fs.rmSync(path.join(testDir, '__tests__'), { recursive: true });
 
-    const output = execCmd<CreateResult>(`force:lightning:lwc:test:create -f ${path.join(testDir, 'brokerCard.js')}`, {
-      ensureExitCode: 0,
-    }).shellOutput;
+    const output = execCmd<GenerateResult>(
+      `force:lightning:lwc:test:create --filepath ${path.join(testDir, 'brokerCard.js')}`,
+      {
+        ensureExitCode: 0,
+      }
+    ).shellOutput;
     expect(output).to.include(path.join(testDir, '__tests__', 'brokerCard.test.js'));
     expect(output).to.include('Test case successfully created:');
   });
 
   it('errors when a __tests__ directory already exists (human)', () => {
-    const output = execCmd<CreateResult>(`force:lightning:lwc:test:create -f ${path.join(testDir, 'brokerCard.js')}`, {
+    const output = execCmd<GenerateResult>(`lightning:generate:lwc:test -f ${path.join(testDir, 'brokerCard.js')}`, {
       ensureExitCode: 1,
     }).shellOutput.stderr;
     expect(output).to.include(path.join(testDir, '__tests__', 'brokerCard.test.js'));

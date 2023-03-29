@@ -12,7 +12,7 @@ import { expect } from 'chai';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
-import Create from '../../../../src/commands/force/lightning/lwc/test/create';
+import CreateTest from '../../../../../src/commands/lightning/generate/lwc/test';
 
 const pathToFooJs = join(process.cwd(), 'path', 'to', 'js', 'foo.js');
 const pathToFooTest = join(process.cwd(), 'path', 'to', 'js', '__tests__', 'foo.test.js');
@@ -35,7 +35,7 @@ describe('force:lightning:lwc:test:create', () => {
     (fs.existsSync as SinonStub).callThrough();
     stubMethod($$.SANDBOX, fs, 'mkdirSync');
     stubMethod($$.SANDBOX, fs, 'writeFileSync');
-    const create = new Create(['-f', pathToFooJs], {} as Config);
+    const create = new CreateTest(['-f', pathToFooJs], {} as Config);
     const result = await create.run();
     expect(result.message).to.contain('Test case successfully created');
   });
@@ -50,7 +50,7 @@ describe('force:lightning:lwc:test:create', () => {
     (fs.existsSync as SinonStub).callThrough();
     stubMethod($$.SANDBOX, fs, 'mkdirSync');
     writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
-    const create = new Create(['-f', pathToFooJs], {} as Config);
+    const create = new CreateTest(['-f', pathToFooJs], {} as Config);
     await create.run();
     expect(writeFileSyncStub.args[0][0]).to.equal(pathToFooTest);
   });
@@ -64,7 +64,7 @@ describe('force:lightning:lwc:test:create', () => {
     (fs.existsSync as SinonStub).callThrough();
     stubMethod($$.SANDBOX, fs, 'mkdirSync');
     writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
-    const create = new Create(['-f', pathToFooJs], {} as Config);
+    const create = new CreateTest(['-f', pathToFooJs], {} as Config);
     await create.run();
     expect(writeFileSyncStub.args[0][1]).to.contain("import Foo from 'c/foo';");
     expect(writeFileSyncStub.args[0][0]).to.equal(pathToFooTest);
@@ -80,7 +80,7 @@ describe('force:lightning:lwc:test:create', () => {
     (fs.existsSync as SinonStub).callThrough();
     stubMethod($$.SANDBOX, fs, 'mkdirSync');
     writeFileSyncStub = stubMethod($$.SANDBOX, fs, 'writeFileSync');
-    const create = new Create(['-f', pathToFooBarJs], {} as Config);
+    const create = new CreateTest(['-f', pathToFooBarJs], {} as Config);
     await create.run();
     expect(writeFileSyncStub.args[0][1]).to.contain("describe('c-foo-bar', () => {");
   });
@@ -88,7 +88,7 @@ describe('force:lightning:lwc:test:create', () => {
   it('logs error if file path does not point to existing file', async () => {
     stubMethod($$.SANDBOX, fs, 'existsSync').withArgs(pathToFooJs).returns(false);
     (fs.existsSync as SinonStub).callThrough();
-    const create = new Create(['-f', pathToFooJs], {} as Config);
+    const create = new CreateTest(['-f', pathToFooJs], {} as Config);
     try {
       await create.run();
       expect.fail('Expected error to be thrown');
@@ -103,7 +103,7 @@ describe('force:lightning:lwc:test:create', () => {
       .withArgs(sinon.match.in([pathToFooJs, pathToFooHtml, pathToFooTest]))
       .returns(true);
     (fs.existsSync as SinonStub).callThrough();
-    const create = new Create(['-f', pathToFooJs], {} as Config);
+    const create = new CreateTest(['-f', pathToFooJs], {} as Config);
     try {
       await create.run();
       expect.fail('Expected error to be thrown');

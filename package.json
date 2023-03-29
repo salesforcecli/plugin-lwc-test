@@ -4,22 +4,22 @@
   "version": "1.0.1",
   "main": "lib/index.js",
   "dependencies": {
-    "@oclif/core": "^2.1.4",
-    "@salesforce/core": "^3.33.1",
-    "@salesforce/kit": "^1.8.5",
-    "@salesforce/sf-plugins-core": "^2.1.2",
+    "@oclif/core": "^2.5.1",
+    "@salesforce/core": "^3.33.6",
+    "@salesforce/kit": "^1.9.2",
+    "@salesforce/sf-plugins-core": "^2.2.4",
     "semver-compare": "^1.0.0",
     "signal-exit": "^3.0.6",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@oclif/plugin-command-snapshot": "^3.3.5",
-    "@oclif/plugin-commands": "^2.2.9",
-    "@oclif/plugin-help": "^5.2.4",
-    "@salesforce/cli-plugins-testkit": "^3.2.21",
+    "@oclif/plugin-command-snapshot": "^3.3.8",
+    "@oclif/plugin-commands": "^2.2.10",
+    "@oclif/plugin-help": "^5.2.7",
+    "@salesforce/cli-plugins-testkit": "^3.2.24",
     "@salesforce/dev-config": "^3.1.0",
     "@salesforce/dev-scripts": "^3.1.1",
-    "@salesforce/plugin-command-reference": "^1.6.3",
+    "@salesforce/plugin-command-reference": "^1.6.5",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.4.6",
     "@salesforce/ts-types": "^1.7.3",
@@ -37,13 +37,13 @@
     "eslint-config-salesforce-typescript": "^1.1.1",
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jsdoc": "^40.0.0",
-    "eslint-plugin-sf-plugin": "^1.8.0",
+    "eslint-plugin-jsdoc": "^40.0.1",
+    "eslint-plugin-sf-plugin": "^1.9.3",
     "husky": "^8.0.3",
     "isbinaryfile": "^5.0.0",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0",
-    "oclif": "^3.6.5",
+    "oclif": "^3.7.0",
     "prettier": "^2.8.4",
     "pretty-quick": "^3.1.0",
     "sinon": "^14.0.0",
@@ -66,23 +66,20 @@
     "bin": "sfdx",
     "commands": "./lib/commands",
     "topics": {
-      "force": {
+      "lightning": {
         "external": true,
         "subtopics": {
-          "lightning": {
-            "external": true,
-            "subtopics": {
-              "lwc": {
-                "description": "tools for Lightning web components in a Salesforce DX workspace",
-                "longDescription": "Tools for Lightning web components in a Salesforce DX workspace.",
-                "subtopics": {
-                  "test": {
-                    "description": "tools for unit testing Lightning web components in a Salesforce DX workspace",
-                    "longDescription": "Tools for unit testing Lightning web components in a Salesforce DX workspace."
-                  }
-                }
-              }
-            }
+          "setup": {
+            "description": "Setup Lightning lwc test framework in the current project.",
+            "longDescription": "Setup Lightning lwc test framework in the current project."
+          },
+          "generate": {
+            "description": "Generate a new lwc test for the current project.",
+            "longDescription": "Generate a new lwc test for the current project."
+          },
+          "run": {
+            "description": "Run a lwc test in the current project.",
+            "longDescription": "Run a lwc test in the current project."
           }
         }
       }
@@ -110,7 +107,7 @@
     "test": "sf-test",
     "test:command-reference": "./bin/dev commandreference:generate -p @salesforce/sfdx-plugin-lwc-test --erroronwarnings",
     "test:deprecation-policy": "./bin/dev snapshot:compare",
-    "test:nuts": "nyc mocha \"./test/**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel",
+    "test:nuts": "nyc mocha \"./test/**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel --jobs 20",
     "version": "oclif readme && git add README.md"
   }
 }

@@ -19,12 +19,14 @@ export type RunResult = {
   jestExitCode: number;
 };
 
-export default class Run extends SfCommand<RunResult> {
+export default class RunTest extends SfCommand<RunResult> {
   public static readonly summary = messages.getMessage('commandDescription');
   public static readonly description = messages.getMessage('longDescription');
   public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
   public static args = { passthrough: Args.string({ description: 'passthrough arg' }) };
+  public static readonly deprecateAliases = true;
+  public static readonly aliases = ['force:lightning:lwc:test:run'];
   public static readonly flags = {
     debug: Flags.boolean({
       char: 'd',
@@ -41,7 +43,7 @@ export default class Run extends SfCommand<RunResult> {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<RunResult> {
-    const { args, flags } = await this.parse(Run);
+    const { args, flags } = await this.parse(RunTest);
     const addArgs: string[] = [];
 
     if (flags.debug) {

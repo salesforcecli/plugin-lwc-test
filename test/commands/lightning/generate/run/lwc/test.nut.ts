@@ -14,16 +14,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { RunResult } from '../../../../src/commands/force/lightning/lwc/test/run';
+import { RunResult } from '../../../../../../src/commands/lightning/run/lwc/test';
 
-describe('lightning:lwc:test:run', () => {
+describe('lightning:run:lwc:test', () => {
   let testSession: TestSession;
 
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
     });
-    execCmd('force:lightning:lwc:test:setup', { ensureExitCode: 0 });
+    execCmd('lightning:setup:lwc:test', { ensureExitCode: 0 });
     // I'm not sure why this test started failing
     // I was unable to reproduce it locally, even in the generated test_session directory
     fs.rmSync(
@@ -45,14 +45,14 @@ describe('lightning:lwc:test:run', () => {
   });
 
   it('runs the tests (json)', () => {
-    const output = execCmd<RunResult>('force:lightning:lwc:test:run --json', {
+    const output = execCmd<RunResult>('lightning:run:lwc:test --json', {
       ensureExitCode: 0,
     }).jsonOutput;
     expect(output?.result.message).to.equal('Test run complete. Exited with status code: 0');
     expect(output?.result.jestExitCode).to.equal(0);
   });
 
-  it('runs the tests (human)', () => {
+  it('runs the tests (human)(cmd alias)', () => {
     const output = execCmd<RunResult>('force:lightning:lwc:test:run', {
       ensureExitCode: 0,
     }).shellOutput.stderr;
@@ -80,7 +80,7 @@ describe('lightning:lwc:test:run', () => {
     );
     await fs.promises.writeFile(testPath, content);
 
-    const output = execCmd<RunResult>('force:lightning:lwc:test:run', {
+    const output = execCmd<RunResult>('lightning:run:lwc:test', {
       ensureExitCode: 0,
     }).shellOutput.stderr;
     expect(output).to.include('Test Suites: 1 failed');
