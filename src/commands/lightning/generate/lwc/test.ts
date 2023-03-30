@@ -20,17 +20,16 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'create');
 
 export default class GenerateTest extends SfCommand<GenerateResult> {
-  public static readonly summary = messages.getMessage('commandDescription');
-  public static readonly description = messages.getMessage('longDescription');
-  public static readonly examples = messages.getMessages('example');
+  public static readonly summary = messages.getMessage('summary');
+  public static readonly description = messages.getMessage('description');
+  public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
   public static readonly deprecateAliases = true;
   public static readonly aliases = ['force:lightning:lwc:test:create'];
   public static readonly flags = {
     file: Flags.file({
       char: 'f',
-      summary: messages.getMessage('filepathFlagDescription'),
-      description: messages.getMessage('filepathFlagLongDescription'),
+      summary: messages.getMessage('flags.file.summary'),
       required: true,
       deprecateAliases: true,
       aliases: ['filepath'],

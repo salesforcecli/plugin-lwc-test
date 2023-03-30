@@ -1,20 +1,18 @@
-# example
+# examples
 
-$ <%= config.bin %> <%= command.id %> -f force-app/main/default/lwc/myButton/myButton.js
+- Create a Lightning web component test file called myButton.test.js for the myButton component:
 
-# commandDescription
+  <%= config.bin %> <%= command.id %> --filef force-app/main/default/lwc/myButton/myButton.js
 
-creates a Lightning web component test file with boilerplate code inside a **tests** directory.
+# summary
 
-# longDescription
+Create a Lightning web component test file.
+
+# description
 
 Creates a **tests** directory in the specified directory. Creates a yourComponentName.test.js file with boilerplate code in the **tests** directory.
 
-# filepathFlagDescription
-
-path to Lightning web component .js file to create a test for
-
-# filepathFlagLongDescription
+# flags.file.summary
 
 Path to Lightning web component .js file to create a test for.
 
