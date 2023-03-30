@@ -55,11 +55,17 @@ describe('lightning:run:lwc:test', () => {
   it('runs the tests (human)(cmd alias)', () => {
     const output = execCmd<RunResult>('force:lightning:lwc:test:run', {
       ensureExitCode: 0,
-    }).shellOutput.stderr;
-    expect(output).to.match(/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/);
-    expect(output).to.match(/Tests:\s+\d+\s+passed,\s+\d+\s+total/);
-    expect(output).to.include('Snapshots:   0 total');
-    expect(output).to.include('PASS');
+    }).shellOutput;
+    const commandOutput = output.stdout;
+    const jestOutput = output.stderr;
+    expect(commandOutput).to.include('Test run complete. Exited with status code: 0');
+    if (!/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/.test(jestOutput)) {
+      expect.fail(jestOutput)
+    }
+    expect(jestOutput).to.match(/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/);
+    expect(jestOutput).to.match(/Tests:\s+\d+\s+passed,\s+\d+\s+total/);
+    expect(jestOutput).to.include('Snapshots:   0 total');
+    expect(jestOutput).to.include('PASS');
   });
 
   it('properly displays failed tests (human)', async () => {
