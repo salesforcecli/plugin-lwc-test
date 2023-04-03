@@ -1,38 +1,38 @@
 # examples
 
-- $ <%= config.bin %> <%= command.id %>
+- Run LWC Jest unit tests:
 
-- $ <%= config.bin %> <%= command.id %> -w
+  $ <%= config.bin %> <%= command.id %>
 
-# commandDescription
+- Run LWC Jest unit tests only when a watched file changes:
 
-invokes Lightning Web Components Jest unit tests.
+  $ <%= config.bin %> <%= command.id %> --watch
 
-# longDescription
+# summary
 
-Invokes Lightning Web Components Jest unit tests.
+Invoke Lightning Web Components Jest unit tests.
 
-# debugFlagDescription
+# flags.debug.summary
 
-run tests in debug mode
+Run tests in a Node process that an external debugger can connect to.
 
-# debugFlagLongDescription
+# flags.debug.description
 
-Runs tests in a Node process that an external debugger can connect to. The run pauses until the debugger is connected. For more information, see: https://jestjs.io/docs/en/troubleshooting
+The run pauses until the debugger is connected. For more information, see: https://jestjs.io/docs/en/troubleshooting.
 
-# watchFlagDescription
+# flags.watch.summary
 
-run tests in watch mode
+Run tests when a watched file changes.
 
-# watchFlagLongDescription
+# flags.watch.description
 
-Runs tests when a watched file changes. Watched files include the component under test and any files it references.
+Watched files include the component under test and any files it references.
 
 # errorNoExecutableFound
 
-No sfdx-lwc-jest executable found. Verify it is properly installed.
-Run "%s lightning:setup:lwc:test --help" for installation details.
+No sfdx-lwc-jest executable found. Verify it's properly installed.
+Run "%s lightning setup lwc test --help" for installation details.
 
 # logSuccess
 
-Test run complete. Exited with status code: %s
+Test run complete. Exited with status code: %s.
