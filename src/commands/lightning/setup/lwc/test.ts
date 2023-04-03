@@ -34,8 +34,8 @@ export type SetupResult = {
 const forceignoreEntry = '\n# LWC Jest tests\n**/__tests__/**';
 
 export default class SetupTest extends SfCommand<SetupResult> {
-  public static readonly summary = messages.getMessage('commandDescription');
-  public static readonly description = messages.getMessage('commandDescription');
+  public static readonly summary = messages.getMessage('summary');
+  public static readonly description = messages.getMessage('description');
   public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
   public static readonly deprecateAliases = true;

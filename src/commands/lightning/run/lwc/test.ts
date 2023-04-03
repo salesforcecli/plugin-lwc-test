@@ -20,8 +20,7 @@ export type RunResult = {
 };
 
 export default class RunTest extends SfCommand<RunResult> {
-  public static readonly summary = messages.getMessage('commandDescription');
-  public static readonly description = messages.getMessage('longDescription');
+  public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
   public static args = { passthrough: Args.string({ description: 'passthrough arg' }) };
@@ -30,12 +29,12 @@ export default class RunTest extends SfCommand<RunResult> {
   public static readonly flags = {
     debug: Flags.boolean({
       char: 'd',
-      summary: messages.getMessage('debugFlagDescription'),
-      description: messages.getMessage('debugFlagLongDescription'),
+      summary: messages.getMessage('flags.debug.summary'),
+      description: messages.getMessage('flags.debug.description'),
     }),
     watch: Flags.boolean({
-      summary: messages.getMessage('watchFlagDescription'),
-      description: messages.getMessage('watchFlagLongDescription'),
+      summary: messages.getMessage('flags.watch.summary'),
+      description: messages.getMessage('flags.watch.description'),
       exclusive: ['debug'],
     }),
     loglevel,

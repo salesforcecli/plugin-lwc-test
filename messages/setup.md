@@ -1,14 +1,16 @@
 # examples
 
-- $ <%= config.bin %> <%= command.id %>
+- Install Jest unit testing tools for LWC:
 
-# commandDescription
+  $ <%= config.bin %> <%= command.id %>
 
-install Jest unit testing tools for Lightning Web Components.
+# summary
 
-# longDescription
+Install Jest unit testing tools for Lightning Web Components.
 
-Installs Jest unit testing tools for Lightning Web Components. For more information, see the Lightning Web Components Dev Guide: https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.testing
+# description
+
+For more information, see the Lightning Web Components Dev Guide: https://developer.salesforce.com/docs/component-library/documentation/lwc/lwc.testing
 
 # errorNodeNotFound
 
