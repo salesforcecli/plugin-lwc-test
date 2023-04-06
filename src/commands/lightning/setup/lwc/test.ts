@@ -7,7 +7,7 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { loglevel, SfCommand } from '@salesforce/sf-plugins-core';
+import { loglevel, SfCommand, Ux } from '@salesforce/sf-plugins-core';
 import { Messages, SfError } from '@salesforce/core';
 import semverCompare = require('semver-compare');
 import { FileWriter } from '../../../../lib/fileWriter';
@@ -61,7 +61,7 @@ export default class SetupTest extends SfCommand<SetupResult> {
     this.updateForceIgnore(fileWriter);
 
     this.log(messages.getMessage('logFileUpdatesStart'));
-    fileWriter.writeFiles();
+    fileWriter.writeFiles(new Ux({ jsonEnabled: this.jsonEnabled() }));
     this.log('logFileUpdatesEnd');
 
     // do this as the last step because it is hard to revert if experience an error from anything above
@@ -74,6 +74,7 @@ export default class SetupTest extends SfCommand<SetupResult> {
   }
 
   // pull out to own method for testability
+  // eslint-disable-next-line class-methods-use-this
   private getFileWriter(): FileWriter {
     return new FileWriter();
   }
@@ -125,7 +126,7 @@ export default class SetupTest extends SfCommand<SetupResult> {
       fileWriter.queueWrite(forceignorePath, forceignoreEntry);
     } else {
       const forceignore = fs.readFileSync(forceignorePath, { encoding: 'utf8' });
-      if (forceignore.indexOf('**/__tests__/**') === -1) {
+      if (!forceignore.includes('**/__tests__/**')) {
         this.log('logQueueForceignoreModify');
         fileWriter.queueAppend(forceignorePath, forceignoreEntry, { encoding: 'utf8' });
       }
@@ -142,7 +143,10 @@ export default class SetupTest extends SfCommand<SetupResult> {
         execSync('npm install --save-dev @salesforce/sfdx-lwc-jest', { stdio: 'inherit' });
       }
     } catch (e) {
-      throw new SfError(messages.getMessage('errorLwcJestInstall', [(e as Error).message]));
+      if (e instanceof Error) {
+        throw new SfError(messages.getMessage('errorLwcJestInstall', [e.message]));
+      }
+      throw e;
     }
   }
 }

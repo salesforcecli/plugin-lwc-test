@@ -8,7 +8,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 import * as sinon from 'sinon';
 import { SinonStub } from 'sinon';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
@@ -108,7 +108,8 @@ describe('force:lightning:lwc:test:create', () => {
       await create.run();
       expect.fail('Expected error to be thrown');
     } catch (e) {
-      expect((e as Error).message).to.contain('Test file already exists');
+      assert(e instanceof Error);
+      expect(e.message).to.contain('Test file already exists');
     }
   });
 });

@@ -40,7 +40,6 @@ export default class RunTest extends SfCommand<RunResult> {
     loglevel,
   };
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<RunResult> {
     const { args, flags } = await this.parse(RunTest);
     const addArgs: string[] = [];
