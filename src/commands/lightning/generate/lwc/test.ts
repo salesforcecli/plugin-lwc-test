@@ -44,10 +44,11 @@ export default class GenerateTest extends SfCommand<GenerateResult> {
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
-      throw new SfError(messages.getMessage('errorFileNotJs', [flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotJs', [filepath]));
     }
+    // TODO: use the `exists` flag on the filename.  This requires all the test mocks to change
     if (!fs.existsSync(modulePath)) {
-      throw new SfError(messages.getMessage('errorFileNotFound', [flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotFound', [filepath]));
     }
 
     const bundlePath = path.dirname(modulePath);
