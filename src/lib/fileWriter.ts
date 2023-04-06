@@ -6,6 +6,7 @@
  */
 import * as crypto from 'crypto';
 import * as fs from 'fs';
+import { Ux } from '@salesforce/sf-plugins-core';
 import signalExit = require('signal-exit');
 
 export class FileWriter {
@@ -52,13 +53,13 @@ export class FileWriter {
     });
   }
 
-  public writeFiles(): void {
+  public writeFiles(ux: Ux): void {
     const cleanup = this.revertChanges();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-assignment
     const removeExitHandler = signalExit(cleanup);
     try {
       this.appendQueue.forEach((item) => {
-        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
+        const tmpFilename = item.filepath + '.' + getHash(item.filepath);
         if (!fs.existsSync(item.filepath)) {
           throw new Error('Attempting to append to file that does not exist: ' + item.filepath);
         }
@@ -68,7 +69,7 @@ export class FileWriter {
       });
 
       this.writeQueue.forEach((item) => {
-        const tmpFilename = item.filepath + '.' + this.getHash(item.filepath);
+        const tmpFilename = item.filepath + '.' + getHash(item.filepath);
         if (fs.existsSync(item.filepath)) {
           fs.copyFileSync(item.filepath, tmpFilename);
           this.tmpFilelist[item.filepath] = tmpFilename;
@@ -82,11 +83,10 @@ export class FileWriter {
       removeExitHandler();
       this.removeTempFiles();
     } catch (e) {
-      // TODO(tbliss): how to get access to the same logger that the commands have?
-      // eslint-disable-next-line no-console
-      console.log('Error writing files. Attempting to revert back to original state.');
-      // eslint-disable-next-line no-console
-      console.log(e);
+      ux.log('Error writing files. Attempting to revert back to original state.');
+      if (e instanceof Error) {
+        ux.log(e.message);
+      }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       removeExitHandler();
       cleanup();
@@ -113,8 +113,7 @@ export class FileWriter {
       fs.unlinkSync(this.tmpFilelist[item]);
     });
   }
-
-  private getHash(filename: string): string {
-    return crypto.createHash('md5').update(filename, 'utf8').update(String(process.pid), 'utf8').digest('hex');
-  }
 }
+
+const getHash = (filename: string): string =>
+  crypto.createHash('md5').update(filename, 'utf8').update(String(process.pid), 'utf8').digest('hex');

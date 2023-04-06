@@ -22,6 +22,7 @@ describe('lightning:run:lwc:test', () => {
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
+      devhubAuthStrategy: 'NONE',
     });
     execCmd('lightning:setup:lwc:test', { ensureExitCode: 0 });
     // I'm not sure why this test started failing

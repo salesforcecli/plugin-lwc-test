@@ -373,7 +373,7 @@ describe('lightning:setup:test', () => {
         .returns(true);
       (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'readFileSync').callsFake((path: string) => {
-        if (path.indexOf('forceignore') !== -1) {
+        if (path.includes('forceignore')) {
           return 'from test';
         }
         return '';
@@ -407,7 +407,7 @@ describe('lightning:setup:test', () => {
         .returns(true);
       (fs.existsSync as SinonStub).callThrough();
       stubMethod($$.SANDBOX, fs, 'readFileSync').callsFake((path: string) => {
-        if (path.indexOf('forceignore') !== -1) {
+        if (path.includes('forceignore')) {
           return '**/__tests__/**';
         }
         return '';

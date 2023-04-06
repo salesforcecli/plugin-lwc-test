@@ -38,7 +38,6 @@ export default class GenerateTest extends SfCommand<GenerateResult> {
     loglevel,
   };
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<GenerateResult> {
     const { flags } = await this.parse(GenerateTest);
     const testDirName = '__tests__';
