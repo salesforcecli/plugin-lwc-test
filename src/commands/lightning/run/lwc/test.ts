@@ -67,8 +67,8 @@ export default class RunTest extends SfCommand<RunResult> {
      */
     const addArgs: string[] = [];
 
-    // remove the '--' flag from the this.argv array
-    const tArgv = this.argv.filter((arg) => arg !== '--');
+    // remove the '--', '--json' and 'loglevel' flags from the this.argv array
+    const tArgv = this.argv.filter((arg) => !['--', '--json', 'loglevel'].includes(arg));
 
     const hasWatchFlag = tArgv.includes('--watch');
     const hasDebugFlag = tArgv.some(arg => /--debug|-d/.test(arg));
@@ -87,11 +87,13 @@ export default class RunTest extends SfCommand<RunResult> {
 
     const scriptRet = this.runJest(addArgs);
 
-    this.log(messages.getMessage('logSuccess', [scriptRet.status?.toString()]));
-    return {
+    const results: RunResult = {
       message: messages.getMessage('logSuccess', [scriptRet.status?.toString()]),
       jestExitCode: scriptRet.status ?? 1,
     };
+
+    this.logSuccess(messages.getMessage('logSuccess', [scriptRet.status?.toString()]));
+    return results;
   }
 
   public runJest(args: string[]): cp.SpawnSyncReturns<Buffer> {

@@ -48,9 +48,9 @@ describe('lightning:run:lwc:test', () => {
   it('runs the tests (json)', () => {
     const output = execCmd<RunResult>('lightning:run:lwc:test --json', {
       ensureExitCode: 0,
-    }).jsonOutput;
-    expect(output?.result.message).to.equal('Test run complete. Exited with status code: 0.');
-    expect(output?.result.jestExitCode).to.equal(0);
+    });
+    expect(output?.jsonOutput?.result.message).to.equal('Test run complete. Exited with status code: 0.');
+    expect(output?.jsonOutput?.result.jestExitCode).to.equal(0);
   });
 
   it('runs the tests (human)(cmd alias)', () => {
