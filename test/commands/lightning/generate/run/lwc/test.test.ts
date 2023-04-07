@@ -115,7 +115,19 @@ describe('force:lightning:lwc:test:run', () => {
       await run.run();
       expect.fail('Should have thrown an error');
     } catch (e) {
-      expect((e as Error).message).to.contain('--debug=true cannot also be provided when using --watch');
+      expect((e as Error).message).to.contain('--watch=true cannot also be provided when using --debug');
+    }
+  });
+
+  it('errors when watch and -d flag set', async () => {
+    $$.inProject(true);
+    stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns({ status: 0 });
+    run = new MyRunTest(['--watch', '-d'], {} as Config);
+    try {
+      await run.run();
+      expect.fail('Should have thrown an error');
+    } catch (e) {
+      expect((e as Error).message).to.contain('--watch=true cannot also be provided when using --debug');
     }
   });
 

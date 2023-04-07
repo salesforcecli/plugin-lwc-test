@@ -41,10 +41,48 @@ export default class RunTest extends SfCommand<RunResult> {
   };
 
   public async run(): Promise<RunResult> {
+    /* In order to ensure backwards compatibility with old SfdxCommand version of this command
+    * it was necessary to bypass the typical parsing of the command.
+    *
+    * This command defines two flags, debug and watch, which are probably the
+    * most used jest flags. The previous implementation of this command also
+    * defined an args configuration, (passthrough) which would allow any
+    * additional flags to be passed through to jest. This is no longer possible
+    * given how @oclif/core parses the command line, rejecting any flags that
+    * are not defined in the flag configuration.
+    *
+    * The solution is two-fold. First, we change the command to allow non-strict
+    * command configuration, as well as allowing the use of the pass through flag ('--').
+    *
+    * Second, we force the parse to use the config "{strict: false, '--': true}", instead
+    * of passing the command class to the parse method. This allows a parse of the command
+    * as if there are no flags defined, which results in the flags being parsed as arguments.
+    *
+    * Before calling the parse method, we filter out the '--' flag from the this.argv array and then
+    * call the parse method overriding the argv with the first element being '--' and the rest of the
+    * elements being the filtered argv array. This results in the parse method returning the flags
+    * as arguments.
+    *
+    * The resulting argv array is then passed to the runJest method as arguments.
+     */
     const addArgs: string[] = [];
+
+    // remove the '--' flag from the this.argv array
     const tArgv = this.argv.filter((arg) => arg !== '--');
+
+    const hasWatchFlag = tArgv.includes('--watch');
+    const hasDebugFlag = tArgv.some(arg => /--debug|-d/.test(arg));
+
+    if (hasWatchFlag && hasDebugFlag) {
+      throw (messages.createError('watchAndDebugAreMutuallyExclusive'));
+    }
+
+    // call the parse method with alternate config and override the argv
+    // with the first element being '--' and the rest of the elements being
     const {argv} = await this.parse({strict: false, '--': true},
       ['--', ...tArgv]);
+
+    // add argv entries to the addArgs array
     addArgs.push(...argv.map((arg) => arg as string));
 
     const scriptRet = this.runJest(addArgs);
