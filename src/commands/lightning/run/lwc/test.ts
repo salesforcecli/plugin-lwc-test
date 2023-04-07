@@ -7,9 +7,8 @@
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Flags, loglevel, SfCommand } from '@salesforce/sf-plugins-core';
-import { Messages } from '@salesforce/core';
-import { Args } from '@oclif/core';
+import {Flags, loglevel, SfCommand} from '@salesforce/sf-plugins-core';
+import {Messages} from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'run');
@@ -23,9 +22,10 @@ export default class RunTest extends SfCommand<RunResult> {
   public static readonly summary = messages.getMessage('summary');
   public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
-  public static args = { passthrough: Args.string({ description: 'passthrough arg' }) };
   public static readonly deprecateAliases = true;
   public static readonly aliases = ['force:lightning:lwc:test:run'];
+  public static strict = false;
+  public static '--' = true;
   public static readonly flags = {
     debug: Flags.boolean({
       char: 'd',
@@ -41,17 +41,11 @@ export default class RunTest extends SfCommand<RunResult> {
   };
 
   public async run(): Promise<RunResult> {
-    const { args, flags } = await this.parse(RunTest);
     const addArgs: string[] = [];
-
-    if (flags.debug) {
-      addArgs.push('--debug');
-    } else if (flags.watch) {
-      addArgs.push('--watch');
-    }
-    if (args.passthrough) {
-      addArgs.push(args.passthrough);
-    }
+    const tArgv = this.argv.filter((arg) => arg !== '--');
+    const {argv} = await this.parse({strict: false, '--': true},
+      ['--', ...tArgv]);
+    addArgs.push(...argv.map((arg) => arg as string));
 
     const scriptRet = this.runJest(addArgs);
 
