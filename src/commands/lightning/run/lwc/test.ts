@@ -83,7 +83,7 @@ export default class RunTest extends SfCommand<RunResult> {
       ['--', ...tArgv]);
 
     // add argv entries to the addArgs array
-    addArgs.push(...argv.map((arg) => arg as string));
+    const addArgs = argv.map((arg) => arg as string);
 
     const scriptRet = this.runJest(addArgs);
 
