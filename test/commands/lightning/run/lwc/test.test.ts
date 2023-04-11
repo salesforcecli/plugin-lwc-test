@@ -13,7 +13,7 @@ import { TestContext } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
 import { SfProject } from '@salesforce/core';
-import RunTest from '../../../../../../src/commands/lightning/run/lwc/test';
+import RunTest from '../../../../../src/commands/lightning/run/lwc/test';
 
 const successReturn = { status: 0 } as cp.SpawnSyncReturns<Buffer>;
 

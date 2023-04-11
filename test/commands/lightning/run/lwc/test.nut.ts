@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { RunResult } from '../../../../../../src/commands/lightning/run/lwc/test';
+import { RunResult } from '../../../../../src/commands/lightning/run/lwc/test';
 
 describe('lightning:run:lwc:test', () => {
   let testSession: TestSession;

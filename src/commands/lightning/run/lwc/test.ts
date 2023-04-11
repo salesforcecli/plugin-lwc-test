@@ -88,7 +88,7 @@ export default class RunTest extends SfCommand<RunResult> {
     * The resulting argv array is then passed to the runJest method as arguments.
      */
     // remove the '--', '--json' and 'loglevel' flags from the this.argv array
-    const tArgv = this.argv.filter((arg) => !['--', '--json', '--loglevel'].includes(arg));
+    const tArgv = this.argv.filter((arg) => !['--', '--loglevel'].includes(arg));
 
     const hasWatchFlag = tArgv.includes('--watch');
     const hasDebugFlag = tArgv.some(arg => /--debug|-d/.test(arg));
@@ -102,22 +102,10 @@ export default class RunTest extends SfCommand<RunResult> {
     const {argv} = await this.parse({strict: false, '--': true},
       ['--', ...tArgv]);
 
-    // split into two arrays, one for command flags and one for remaining args
-    const cmdArgs = argv.map(arg => arg as string).reduce((parts, arg) => {
-      if (!arg.startsWith('-')) {
-        parts.right.push(arg);
-      }
-      const argSansHyphen = (arg).replace(/^-+/, '');
+    // rearrange the argv array so that the cmd flags are at the beginning and everything else is at the end
+    const cmdArgs = this.rearrangeCmdArgs(argv);
 
-      if (this.flagKeys.some(key => key === argSansHyphen || RunTest.flags[key as keyof typeof RunTest.flags].char === argSansHyphen)) {
-        parts.left.push(arg);
-      } else {
-        parts.right.push(arg);
-      }
-      return parts;
-    }, {left: [] as string[], right: [] as string[]});
-
-    const scriptRet = this.runJest([...cmdArgs.left, '--',  ...cmdArgs.right]);
+    const scriptRet = this.runJest(cmdArgs);
 
     const results: RunResult = {
       message: messages.getMessage('logSuccess', [scriptRet.status?.toString()]),
@@ -136,6 +124,23 @@ export default class RunTest extends SfCommand<RunResult> {
       stdio: 'inherit',
       shell: true,
     });
+  }
+
+  private rearrangeCmdArgs(argv: unknown[]): string[] {
+    const cmdArgs = argv.map(arg => arg as string).reduce((jestArgs: string[], arg: string) => {
+      if (!arg.startsWith('-')) {
+        jestArgs.push(arg);
+      }
+      const argSansHyphen = (arg).replace(/^-+/, '');
+
+      if (this.flagKeys.some(key => key === argSansHyphen || RunTest.flags[key as keyof typeof RunTest.flags].char === argSansHyphen)) {
+        jestArgs.unshift(arg);
+      } else {
+        jestArgs.push(arg);
+      }
+      return jestArgs;
+    }, ['--']);
+    return cmdArgs;
   }
 
   private getExecutablePath(): string {
