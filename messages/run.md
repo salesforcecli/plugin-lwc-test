@@ -67,8 +67,4 @@ Run "%s lightning setup lwc test --help" for installation details.
 
 # logSuccess
 
-Test run complete. Exited with status code: %s.
-
-# watchAndDebugAreMutuallyExclusive
-
---watch=true cannot also be provided when using --debug
+Test run complete. Jest exited with status code: %s%s.

@@ -4,7 +4,7 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as cp from 'child_process';
+import {spawn, spawnSync} from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import {Flags, loglevel, SfCommand} from '@salesforce/sf-plugins-core';
@@ -16,6 +16,7 @@ const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'run'
 export type RunResult = {
   message: string;
   jestExitCode: number;
+  jestResults?: Record<string, unknown>;
 };
 
 export default class RunTest extends SfCommand<RunResult> {
@@ -63,84 +64,125 @@ export default class RunTest extends SfCommand<RunResult> {
   private flagKeys = Object.keys(RunTest.flags);
 
   public async run(): Promise<RunResult> {
-    /* In order to ensure backwards compatibility with old SfdxCommand version of this command
-    * it was necessary to bypass the typical parsing of the command.
-    *
-    * This command defines two flags, debug and watch, which are probably the
-    * most used jest flags. The previous implementation of this command also
-    * defined an args configuration, (passthrough) which would allow any
-    * additional flags to be passed through to jest. This is no longer possible
-    * given how @oclif/core parses the command line, rejecting any flags that
-    * are not defined in the flag configuration.
-    *
-    * The solution is two-fold. First, we change the command to allow non-strict
-    * command configuration, as well as allowing the use of the pass through flag ('--').
-    *
-    * Second, we force the parse to use the config "{strict: false, '--': true}", instead
-    * of passing the command class to the parse method. This allows a parse of the command
-    * as if there are no flags defined, which results in the flags being parsed as arguments.
-    *
-    * Before calling the parse method, we filter out the '--' flag from the this.argv array and then
-    * call the parse method overriding the argv with the first element being '--' and the rest of the
-    * elements being the filtered argv array. This results in the parse method returning the flags
-    * as arguments.
-    *
-    * The resulting argv array is then passed to the runJest method as arguments.
-     */
-    // remove the '--', '--json' and 'loglevel' flags from the this.argv array
-    const tArgv = this.argv.filter((arg) => !['--', '--loglevel'].includes(arg));
+    // rearrange the argv array so that the cmd flags are at the beginning and everything else is at the end
+    const cmdArgs = this.rearrangeCmdArgs(this.argv);
 
-    const hasWatchFlag = tArgv.includes('--watch');
-    const hasDebugFlag = tArgv.some(arg => /--debug|-d/.test(arg));
+    // call parse using RunTest config to validate this command's flags
+    await this.parse(RunTest, cmdArgs);
 
-    if (hasWatchFlag && hasDebugFlag) {
-      throw (messages.createError('watchAndDebugAreMutuallyExclusive'));
+    if (this.jsonEnabled()) {
+      const jsonIndex = cmdArgs.indexOf('--json');
+      // remove the left hand json flag from the cmdArgs array
+      cmdArgs.splice(jsonIndex, 1);
     }
 
-    // call the parse method with alternate config and override the argv
-    // with the first element being '--' and the rest of the elements being
-    const {argv} = await this.parse({strict: false, '--': true},
-      ['--', ...tArgv]);
+    const results = await this.runJest(cmdArgs);
+    const message = results.message === '' ? '' : ` (Message: ${results.message})`;
+    results.message = messages.getMessage('logSuccess', [
+      results.jestExitCode,
+      message,
+    ]);
 
-    // rearrange the argv array so that the cmd flags are at the beginning and everything else is at the end
-    const cmdArgs = this.rearrangeCmdArgs(argv);
-
-    const scriptRet = this.runJest(cmdArgs);
-
-    const results: RunResult = {
-      message: messages.getMessage('logSuccess', [scriptRet.status?.toString()]),
-      jestExitCode: scriptRet.status ?? 1,
-    };
-
-    this.logSuccess(messages.getMessage('logSuccess', [scriptRet.status?.toString()]));
+    this.logSuccess(results.message);
     return results;
   }
 
-  public runJest(args: string[]): cp.SpawnSyncReturns<Buffer> {
+  public runJest(args: string[]): Promise<RunResult> {
+    // is json flag present for jest?
+    const jestJsonEnabled = args.includes('--json');
     // on windows we must execute with the node prefix
     const executable = process.platform === 'win32' ? `node ${this.getExecutablePath()}` : this.getExecutablePath();
-
-    return cp.spawnSync(executable, args, {
-      stdio: 'inherit',
-      shell: true,
+    let stdout = '';
+    let stderr = '';
+    // create a child process spawn that will handle results like the unix "tee" command
+    return new Promise<RunResult>((resolve): void => {
+      if (jestJsonEnabled) {
+        let message = '';
+        const cp = spawn(executable, args, {
+          stdio: ['ignore', 'pipe', 'pipe'],
+          shell: true,
+        });
+        cp.on('error', (error) => {
+          this.log(`Error executing command: ${error.message}`);
+          message = error.message;
+          throw error;
+        });
+        // only thing emitted to stdout is jest json results, so only capture that
+        cp.stdout.on('data', (data: string) => {
+          stdout = stdout + data;
+        });
+        cp.stderr.on('data', (data: string) => {
+          stderr = stderr + data.toString();
+          process.stderr.write(data);
+        });
+        cp.on('exit', (code) => {
+          // eslint-disable-next-line no-console
+          console.log('================================================', stderr);
+          let exitCode = code ?? 0;
+          let jestResults;
+          try {
+            jestResults = stdout.length > 0 ? JSON.parse(stdout) as Record<string, unknown> : undefined;
+          } catch (err) {
+            message = (err as Error).message ?? 'An error occurred while parsing the jest results';
+            exitCode = 1;
+          }
+          resolve({
+            message,
+            jestExitCode: exitCode,
+            jestResults
+          });
+        });
+      } else {
+        const cp = spawnSync(executable, args, {
+          stdio: ['ignore', 'inherit', 'inherit'],
+          shell: true,
+        });
+        resolve({
+          message: cp.error?.message ?? '',
+          jestExitCode: cp.status ?? 0,
+        });
+      }
     });
   }
 
   private rearrangeCmdArgs(argv: unknown[]): string[] {
-    const cmdArgs = argv.map(arg => arg as string).reduce((jestArgs: string[], arg: string) => {
-      if (!arg.startsWith('-')) {
-        jestArgs.push(arg);
+    const passThroughIndex = argv.indexOf('--');
+    // find indexes of json flags
+    const jsonIndexes = argv.reduce((indexes: number[], arg, index) => {
+      if (arg === '--json') {
+        indexes.push(index);
       }
-      const argSansHyphen = (arg).replace(/^-+/, '');
-
-      if (this.flagKeys.some(key => key === argSansHyphen || RunTest.flags[key as keyof typeof RunTest.flags].char === argSansHyphen)) {
-        jestArgs.unshift(arg);
-      } else {
-        jestArgs.push(arg);
-      }
-      return jestArgs;
-    }, ['--']);
-    return cmdArgs;
+      return indexes;
+    }, []);
+    let jsonCount = 0;
+    const cmdArgs = argv.map(arg => arg as string)
+      .filter(arg => arg !== '--')
+      .reduce((jestArgs: string[], arg: string) => {
+        // not a flag, so add it to the end
+        if (!arg.startsWith('-')) {
+          jestArgs.push(arg);
+          return jestArgs;
+        }
+        // get the arg sans hyphen
+        const argSansHyphen = (arg).replace(/^-+/, '');
+        // if the arg is json, and it is after the pass-through flag, add it to the end
+        if (argSansHyphen === 'json') {
+          if (jsonIndexes[jsonCount++] > passThroughIndex) {
+            jestArgs.push(arg);
+          } else {
+            jestArgs.unshift(arg);
+          }
+          return jestArgs;
+        }
+        if (this.flagKeys.some(key => key === argSansHyphen || RunTest.flags[key as keyof typeof RunTest.flags].char === argSansHyphen)) {
+          jestArgs.unshift(arg);
+        } else {
+          jestArgs.push(arg);
+        }
+        return jestArgs;
+      }, ['--']);
+    // remove the '--' if it is the last element
+    return cmdArgs[cmdArgs.length - 1] === '--' ? cmdArgs.slice(0, -1) : cmdArgs;
   }
 
   private getExecutablePath(): string {

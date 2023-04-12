@@ -49,7 +49,7 @@ describe('lightning:run:lwc:test', () => {
     const output = execCmd<RunResult>('lightning:run:lwc:test --json', {
       ensureExitCode: 0,
     });
-    expect(output?.jsonOutput?.result.message).to.equal('Test run complete. Exited with status code: 0.');
+    expect(output?.jsonOutput?.result.message).to.equal('Test run complete. Jest exited with status code: 0.');
     expect(output?.jsonOutput?.result.jestExitCode).to.equal(0);
   });
 
@@ -59,7 +59,7 @@ describe('lightning:run:lwc:test', () => {
     }).shellOutput;
     const commandOutput = output.stdout;
     const jestOutput = output.stderr;
-    expect(commandOutput).to.include('Test run complete. Exited with status code: 0.');
+    expect(commandOutput).to.include('Test run complete. Jest exited with status code: 0.');
     if (!/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/.test(jestOutput)) {
       expect.fail(jestOutput);
     }
