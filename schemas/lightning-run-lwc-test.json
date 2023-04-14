@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/RunResult",
+  "definitions": {
+    "RunResult": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "jestExitCode": {
+          "type": "number"
+        },
+        "jestResults": {
+          "type": "object",
+          "additionalProperties": {}
+        }
+      },
+      "required": [
+        "message",
+        "jestExitCode"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/GenerateResult",
+  "definitions": {
+    "GenerateResult": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "testPath": {
+          "type": "string"
+        },
+        "className": {
+          "type": "string"
+        },
+        "elementName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "testPath",
+        "className",
+        "elementName"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

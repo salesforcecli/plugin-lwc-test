@@ -20,17 +20,16 @@ Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'create');
 
 export default class GenerateTest extends SfCommand<GenerateResult> {
-  public static readonly summary = messages.getMessage('commandDescription');
-  public static readonly description = messages.getMessage('longDescription');
-  public static readonly examples = messages.getMessages('example');
+  public static readonly summary = messages.getMessage('summary');
+  public static readonly description = messages.getMessage('description');
+  public static readonly examples = messages.getMessages('examples');
   public static readonly requiresProject = true;
   public static readonly deprecateAliases = true;
   public static readonly aliases = ['force:lightning:lwc:test:create'];
   public static readonly flags = {
     file: Flags.file({
       char: 'f',
-      summary: messages.getMessage('filepathFlagDescription'),
-      description: messages.getMessage('filepathFlagLongDescription'),
+      summary: messages.getMessage('flags.file.summary'),
       required: true,
       deprecateAliases: true,
       aliases: ['filepath'],
@@ -38,7 +37,6 @@ export default class GenerateTest extends SfCommand<GenerateResult> {
     loglevel,
   };
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   public async run(): Promise<GenerateResult> {
     const { flags } = await this.parse(GenerateTest);
     const testDirName = '__tests__';
@@ -46,10 +44,11 @@ export default class GenerateTest extends SfCommand<GenerateResult> {
 
     const modulePath = path.isAbsolute(filepath) ? filepath : path.join(process.cwd(), filepath);
     if (path.extname(modulePath) !== '.js') {
-      throw new SfError(messages.getMessage('errorFileNotJs', [flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotJs', [filepath]));
     }
+    // TODO: use the `exists` flag on the filename.  This requires all the test mocks to change
     if (!fs.existsSync(modulePath)) {
-      throw new SfError(messages.getMessage('errorFileNotFound', [flags.filepath]));
+      throw new SfError(messages.getMessage('errorFileNotFound', [filepath]));
     }
 
     const bundlePath = path.dirname(modulePath);

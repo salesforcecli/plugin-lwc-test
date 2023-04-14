@@ -17,6 +17,7 @@ describe('lightning:generate:lwc:test', () => {
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
+      devhubAuthStrategy: 'NONE',
     });
     testDir = path.join(testSession.project.dir, 'force-app', 'main', 'default', 'lwc', 'brokerCard');
   });

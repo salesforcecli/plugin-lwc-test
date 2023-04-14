@@ -13,9 +13,10 @@ import { TestContext } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { Config } from '@oclif/core';
 import { SfProject } from '@salesforce/core';
-import RunTest from '../../../../../../src/commands/lightning/run/lwc/test';
+import RunTest from '../../../../../src/commands/lightning/run/lwc/test';
+import {RunResult} from '../../../../../src/commands/lightning/run/lwc/test';
 
-const successReturn = { status: 0 } as cp.SpawnSyncReturns<Buffer>;
+const successReturn: RunResult = {jestExitCode: 0, message: ''};
 
 function setupProject(setup: (project: SfProject) => void = () => {}) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -52,31 +53,36 @@ class MyRunTest extends RunTest {
   }
 }
 
-describe('force:lightning:lwc:test:run', () => {
+describe('lightning:run:lwc:test', () => {
   // Mock all things in core, like api, file io, etc.
   const $$ = new TestContext();
   let runJestStub: sinon.SinonStub;
   let run: MyRunTest;
 
+  afterEach(() => {
+    runJestStub?.restore();
+  });
+
   it('outputs completed message on status code 0', async () => {
     $$.inProject(true);
-    stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns(successReturn);
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
     run = new MyRunTest([], {} as Config);
     const result = await run.run();
-    expect(result.message).to.contain('Test run complete. Exited with status code: 0');
+    expect(result.message).to.contain('Test run complete. Jest exited with status code: 0');
   });
 
   it('outputs completed message on status code 1 (failed tests)', async () => {
     $$.inProject(true);
-    stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns({ status: 1 });
+    const unsuccessfulReturn = {message: 'Something went wrong', jestExitCode: 1};
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(unsuccessfulReturn);
     run = new MyRunTest([], {} as Config);
     const result = await run.run();
-    expect(result.message).to.contain('Test run complete. Exited with status code: 1');
+    expect(result.message).to.contain('Test run complete. Jest exited with status code: 1');
   });
 
   it('passes --debug to runJest when debug flag set', async () => {
     $$.inProject(true);
-    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns(successReturn);
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
     run = new MyRunTest(['--debug'], {} as Config);
     await run.run();
     expect(runJestStub.args[0][0]).to.contain('--debug');
@@ -84,7 +90,7 @@ describe('force:lightning:lwc:test:run', () => {
 
   it('passes --watch to runJest when debug flag set', async () => {
     $$.inProject(true);
-    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns(successReturn);
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
     run = new MyRunTest(['--watch'], {} as Config);
     await run.run();
     expect(runJestStub.args[0][0]).to.contain('--watch');
@@ -92,7 +98,7 @@ describe('force:lightning:lwc:test:run', () => {
 
   it('passes extra args to runJest', async () => {
     $$.inProject(true);
-    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns(successReturn);
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
     run = new MyRunTest(['path/to/test'], {} as Config);
     await run.run();
     expect(runJestStub.args[0][0]).to.contain('path/to/test');
@@ -100,7 +106,7 @@ describe('force:lightning:lwc:test:run', () => {
 
   it('passes extra args and debug flag to runJest', async () => {
     $$.inProject(true);
-    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns(successReturn);
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
     run = new MyRunTest(['--debug', 'path/to/test'], {} as Config);
     await run.run();
     expect(runJestStub.args[0][0]).to.contain('path/to/test');
@@ -109,8 +115,20 @@ describe('force:lightning:lwc:test:run', () => {
 
   it('errors when watch and debug flag set', async () => {
     $$.inProject(true);
-    stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').returns({ status: 0 });
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
     run = new MyRunTest(['--watch', '--debug'], {} as Config);
+    try {
+      await run.run();
+      expect.fail('Should have thrown an error');
+    } catch (e) {
+      expect((e as Error).message).to.contain('--debug=true cannot also be provided when using --watch');
+    }
+  });
+
+  it('errors when watch and -d flag set', async () => {
+    $$.inProject(true);
+    runJestStub = stubMethod($$.SANDBOX, MyRunTest.prototype, 'runJest').resolves(successReturn);
+    run = new MyRunTest(['--watch', '-d'], {} as Config);
     try {
       await run.run();
       expect.fail('Should have thrown an error');

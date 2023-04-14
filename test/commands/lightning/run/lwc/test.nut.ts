@@ -14,7 +14,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { expect } from 'chai';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
-import { RunResult } from '../../../../../../src/commands/lightning/run/lwc/test';
+import { RunResult } from '../../../../../src/commands/lightning/run/lwc/test';
 
 describe('lightning:run:lwc:test', () => {
   let testSession: TestSession;
@@ -22,6 +22,7 @@ describe('lightning:run:lwc:test', () => {
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
+      devhubAuthStrategy: 'NONE',
     });
     execCmd('lightning:setup:lwc:test', { ensureExitCode: 0 });
     // I'm not sure why this test started failing
@@ -47,19 +48,25 @@ describe('lightning:run:lwc:test', () => {
   it('runs the tests (json)', () => {
     const output = execCmd<RunResult>('lightning:run:lwc:test --json', {
       ensureExitCode: 0,
-    }).jsonOutput;
-    expect(output?.result.message).to.equal('Test run complete. Exited with status code: 0');
-    expect(output?.result.jestExitCode).to.equal(0);
+    });
+    expect(output?.jsonOutput?.result.message).to.equal('Test run complete. Jest exited with status code: 0.');
+    expect(output?.jsonOutput?.result.jestExitCode).to.equal(0);
   });
 
   it('runs the tests (human)(cmd alias)', () => {
     const output = execCmd<RunResult>('force:lightning:lwc:test:run', {
       ensureExitCode: 0,
-    }).shellOutput.stderr;
-    expect(output).to.match(/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/);
-    expect(output).to.match(/Tests:\s+\d+\s+passed,\s+\d+\s+total/);
-    expect(output).to.include('Snapshots:   0 total');
-    expect(output).to.include('PASS');
+    }).shellOutput;
+    const commandOutput = output.stdout;
+    const jestOutput = output.stderr;
+    expect(commandOutput).to.include('Test run complete. Jest exited with status code: 0.');
+    if (!/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/.test(jestOutput)) {
+      expect.fail(jestOutput);
+    }
+    expect(jestOutput).to.match(/Test Suites:\s+\d+\s+passed,\s+\d+\s+total/);
+    expect(jestOutput).to.match(/Tests:\s+\d+\s+passed,\s+\d+\s+total/);
+    expect(jestOutput).to.include('Snapshots:   0 total');
+    expect(jestOutput).to.include('PASS');
   });
 
   it('properly displays failed tests (human)', async () => {

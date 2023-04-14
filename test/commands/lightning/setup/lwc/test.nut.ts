@@ -16,6 +16,7 @@ describe('lightning:setup:lwc:test', () => {
   before('prepare session and ensure environment variables', async () => {
     testSession = await TestSession.create({
       project: { gitClone: 'https://github.com/trailheadapps/dreamhouse-lwc' },
+      devhubAuthStrategy: 'NONE',
     });
   });
 

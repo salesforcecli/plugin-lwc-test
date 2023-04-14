@@ -1,20 +1,42 @@
 [
-  {
-    "command": "lightning:generate:lwc:test",
-    "plugin": "@salesforce/sfdx-plugin-lwc-test",
-    "flags": ["file", "json", "loglevel"],
-    "alias": ["force:lightning:lwc:test:create"]
-  },
-  {
-    "command": "lightning:run:lwc:test",
-    "plugin": "@salesforce/sfdx-plugin-lwc-test",
-    "flags": ["debug", "json", "loglevel", "watch"],
-    "alias": ["force:lightning:lwc:test:run"]
-  },
-  {
-    "command": "lightning:setup:lwc:test",
-    "plugin": "@salesforce/sfdx-plugin-lwc-test",
-    "flags": ["json", "loglevel"],
-    "alias": ["force:lightning:lwc:test:setup"]
-  }
+    {
+        "command": "lightning:generate:lwc:test",
+        "plugin": "@salesforce/sfdx-plugin-lwc-test",
+        "flags": [
+            "file",
+            "json",
+            "loglevel"
+        ],
+        "alias": [
+            "force:lightning:lwc:test:create"
+        ]
+    },
+    {
+        "command": "lightning:run:lwc:test",
+        "plugin": "@salesforce/sfdx-plugin-lwc-test",
+        "flags": [
+            "coverage",
+            "debug",
+            "json",
+            "loglevel",
+            "skipApiVersionCheck",
+            "updateSnapshot",
+            "verbose",
+            "watch"
+        ],
+        "alias": [
+            "force:lightning:lwc:test:run"
+        ]
+    },
+    {
+        "command": "lightning:setup:lwc:test",
+        "plugin": "@salesforce/sfdx-plugin-lwc-test",
+        "flags": [
+            "json",
+            "loglevel"
+        ],
+        "alias": [
+            "force:lightning:lwc:test:setup"
+        ]
+    }
 ]
