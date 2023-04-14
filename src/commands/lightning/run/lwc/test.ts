@@ -17,6 +17,7 @@ export type RunResult = {
   message: string;
   jestExitCode: number;
   jestResults?: Record<string, unknown>;
+  stderr?: string;
 };
 
 export default class RunTest extends SfCommand<RunResult> {
@@ -64,17 +65,19 @@ export default class RunTest extends SfCommand<RunResult> {
   private flagKeys = Object.keys(RunTest.flags);
 
   public async run(): Promise<RunResult> {
-    // rearrange the argv array so that the cmd flags are at the beginning and everything else is at the end
+    this.validateFlags();
     const cmdArgs = this.rearrangeCmdArgs(this.argv);
 
     // call parse using RunTest config to validate this command's flags
-    await this.parse(RunTest, cmdArgs);
+    await this.parse(RunTest);
 
     if (this.jsonEnabled()) {
       const jsonIndex = cmdArgs.indexOf('--json');
       // remove the left hand json flag from the cmdArgs array
       cmdArgs.splice(jsonIndex, 1);
     }
+
+    this.maybeEnableJestJsonFlag(cmdArgs);
 
     const results = await this.runJest(cmdArgs);
     const message = results.message === '' ? '' : ` (Message: ${results.message})`;
@@ -86,6 +89,7 @@ export default class RunTest extends SfCommand<RunResult> {
     this.logSuccess(results.message);
     return results;
   }
+
 
   public runJest(args: string[]): Promise<RunResult> {
     // is json flag present for jest?
@@ -113,11 +117,9 @@ export default class RunTest extends SfCommand<RunResult> {
         });
         cp.stderr.on('data', (data: string) => {
           stderr = stderr + data.toString();
-          process.stderr.write(data);
         });
         cp.on('exit', (code) => {
           // eslint-disable-next-line no-console
-          console.log('================================================', stderr);
           let exitCode = code ?? 0;
           let jestResults;
           try {
@@ -129,12 +131,13 @@ export default class RunTest extends SfCommand<RunResult> {
           resolve({
             message,
             jestExitCode: exitCode,
-            jestResults
+            jestResults,
+            stderr: stderr.length > 0 ? stderr : undefined
           });
         });
       } else {
         const cp = spawnSync(executable, args, {
-          stdio: ['ignore', 'inherit', 'inherit'],
+          stdio: 'inherit',
           shell: true,
         });
         resolve({
@@ -165,12 +168,10 @@ export default class RunTest extends SfCommand<RunResult> {
         }
         // get the arg sans hyphen
         const argSansHyphen = (arg).replace(/^-+/, '');
-        // if the arg is json, and it is after the pass-through flag, add it to the end
+
         if (argSansHyphen === 'json') {
           if (jsonIndexes[jsonCount++] > passThroughIndex) {
             jestArgs.push(arg);
-          } else {
-            jestArgs.unshift(arg);
           }
           return jestArgs;
         }
@@ -185,6 +186,19 @@ export default class RunTest extends SfCommand<RunResult> {
     return cmdArgs[cmdArgs.length - 1] === '--' ? cmdArgs.slice(0, -1) : cmdArgs;
   }
 
+  private maybeEnableJestJsonFlag(cmdArgs: string[]): void {
+    if (this.jsonEnabled()) {
+      if (!cmdArgs.includes('--json')) {
+        if (!cmdArgs.includes('--')) {
+          // add pass through flag to the cmdArgs array
+          cmdArgs.push('--');
+        }
+        // add the jest json flag to the cmdArgs array
+        cmdArgs.push('--json');
+      }
+    }
+  }
+
   private getExecutablePath(): string {
     const projectPath = this.project.getPath();
     const nodeModulePath =
@@ -197,5 +211,23 @@ export default class RunTest extends SfCommand<RunResult> {
       throw messages.createError('errorNoExecutableFound', [this.config.bin]);
     }
     return executablePath;
+  }
+
+  private validateFlags(): void {
+    // check if --json is being passed as part of pass though args
+    const ptIndex = this.argv.indexOf('--');
+    const jestJsonIndex = this.argv.indexOf('--json') > ptIndex;
+    // throw error if json is not enabled and pass through --json flag is present
+    if (!this.jsonEnabled()) {
+      if (jestJsonIndex) {
+        throw messages.createError('mustUseJsonFlag');
+      } else {
+        this.warn(messages.getMessage('jestJsonFlagWarning'));
+      }
+    }
+
+      if (this.jsonEnabled() && this.argv.some(arg => arg.includes('watch'))) {
+        throw messages.createError('watchCannotBeUsedWithJsonFlag');
+      }
   }
 }

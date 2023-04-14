@@ -68,3 +68,15 @@ Run "%s lightning setup lwc test --help" for installation details.
 # logSuccess
 
 Test run complete. Jest exited with status code: %s%s.
+
+# mustUseJsonFlag
+
+In order to get jest json results, you must use the command --json flag.
+
+# jestJsonFlagWarning
+
+Requesting jest json results using "-- --json" is deprecated. Use "--json" instead.
+
+# watchCannotBeUsedWithJsonFlag
+
+Any of the jest "--watch" flags cannot be used with the "--json" flag.
