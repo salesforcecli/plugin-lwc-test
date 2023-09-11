@@ -43,7 +43,7 @@
     "isbinaryfile": "^5.0.0",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0",
-    "oclif": "^3.1.2",
+    "oclif": "^3.14.0",
     "prettier": "^2.0.5",
     "pretty-quick": "^3.1.0",
     "sinon": "^14.0.0",
@@ -56,7 +56,8 @@
   "files": [
     "/lib",
     "/messages",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/oclif.lock"
   ],
   "keywords": [
     "sfdx-plugin"
@@ -105,7 +106,7 @@
     "lint": "sf-lint",
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "yarn lint && yarn test:deprecation-policy && yarn test:command-reference",
-    "prepack": "sf-prepack",
+    "prepack": "sf-prepack && oclif lock",
     "pretest": "sf-compile-test",
     "test": "sf-test",
     "test:command-reference": "./bin/dev commandreference:generate -p @salesforce/sfdx-plugin-lwc-test --erroronwarnings",
