@@ -10,7 +10,7 @@ import * as path from 'path';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages, SfError } from '@salesforce/core';
 import semverCompare = require('semver-compare');
-import { FileWriter } from '../../../../../lib/fileWriter';
+import { FileWriter } from '../../../../../shared/fileWriter';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('@salesforce/sfdx-plugin-lwc-test', 'setup');

@@ -7,7 +7,6 @@
 module.exports = {
   extends: ['eslint-config-salesforce-typescript', 'eslint-config-salesforce-license'],
   rules: {
-    'jsdoc/newline-after-description': 'off',
     '@typescript-eslint/no-unsafe-argument': 'off',
     '@typescript-eslint/prefer-includes': 'off',
     'class-methods-use-this': 'off',
