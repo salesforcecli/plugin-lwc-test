@@ -11,6 +11,7 @@ import { expect, test } from '@salesforce/command/lib/test';
 import { testSetup } from '@salesforce/core/lib/testSetup';
 import { stubMethod } from '@salesforce/ts-sinon';
 import { SinonStub } from 'sinon';
+// eslint-disable-next-line
 import Setup from '../../../../lib/commands/force/lightning/lwc/test/setup';
 
 // Mock all things in core, like api, file io, etc.
