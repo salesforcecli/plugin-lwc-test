@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.1.0...1.1.1) (2023-10-24)
+
+
+### Bug Fixes
+
+* bump jsdocs to allow node 20 ([#142](https://github.com/salesforce/sfdx-plugin-lwc-test/issues/142)) ([30bff5b](https://github.com/salesforce/sfdx-plugin-lwc-test/commit/30bff5b9d09cbaddf4cdbdd77b45f32865d383c0))
+
+
+
 # [1.1.0](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.0.2...1.1.0) (2023-09-11)
 
 
