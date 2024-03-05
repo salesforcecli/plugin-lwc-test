@@ -57,7 +57,8 @@
     "/lib",
     "/messages",
     "/oclif.manifest.json",
-    "/oclif.lock"
+    "/oclif.lock",
+    "/npm-shrinkwrap.json"
   ],
   "keywords": [
     "sfdx-plugin"
@@ -104,9 +105,9 @@
     "docs": "sf-docs",
     "format": "sf-format",
     "lint": "sf-lint",
-    "postpack": "rm -f oclif.manifest.json",
+    "postpack": "rm -f oclif.manifest.json oclif.lock npm-shrinkwrap.json",
     "posttest": "yarn lint && yarn test:deprecation-policy && yarn test:command-reference",
-    "prepack": "sf-prepack && oclif lock",
+    "prepack": "sf-prepack && oclif lock && npm shrinkwrap",
     "pretest": "sf-compile-test",
     "test": "sf-test",
     "test:command-reference": "./bin/dev commandreference:generate -p @salesforce/sfdx-plugin-lwc-test --erroronwarnings",
