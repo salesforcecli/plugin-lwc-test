@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.1.1...1.2.0) (2024-03-05)
+
+
+### Features
+
+* publish npm-shrinkwrap.json ([#161](https://github.com/salesforce/sfdx-plugin-lwc-test/issues/161)) ([99734c1](https://github.com/salesforce/sfdx-plugin-lwc-test/commit/99734c1f9b0668c131297fe596c6a0588b2e51e0))
+
+
+
 ## [1.1.1](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.1.0...1.1.1) (2023-10-24)
 
 
