@@ -81,7 +81,7 @@ describe('lightning:lwc:test:run', () => {
     await fs.promises.writeFile(testPath, content);
 
     const output = execCmd<RunResult>('force:lightning:lwc:test:run', {
-      ensureExitCode: 0,
+      ensureExitCode: 1,
     }).shellOutput.stderr;
     expect(output).to.include('Test Suites: 1 failed');
     expect(output).to.include('Tests:       1 failed');
