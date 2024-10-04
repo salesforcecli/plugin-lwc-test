@@ -55,9 +55,9 @@ describe('lightning:lwc:test:setup', () => {
     content = await fs.promises.readFile(pjsonPath, 'utf-8');
     const forceignoreContent = fs.readFileSync(forceignorePath, 'utf-8');
     expect(forceignoreContent).to.include('**/__tests__/**');
-    expect(content).to.include('"test:unit": "sfdx-lwc-jest --skipApiVersionCheck"');
-    expect(content).to.include('"test:unit:coverage": "sfdx-lwc-jest --coverage --skipApiVersionCheck"');
-    expect(content).to.include('"test:unit:debug": "sfdx-lwc-jest --debug --skipApiVersionCheck"');
+    expect(content).to.include('"test:unit": "sfdx-lwc-jest"');
+    expect(content).to.include('"test:unit:coverage": "sfdx-lwc-jest --coverage "');
+    expect(content).to.include('"test:unit:debug": "sfdx-lwc-jest --debug "');
     expect(content).to.include('"@salesforce/sfdx-lwc-jest": "^');
   });
 });
