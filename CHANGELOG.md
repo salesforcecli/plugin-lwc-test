@@ -1,3 +1,12 @@
+## [1.2.1](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.2.0...1.2.1) (2024-10-04)
+
+
+### Bug Fixes
+
+* set exit code based on executed command ([#193](https://github.com/salesforce/sfdx-plugin-lwc-test/issues/193)) ([6dd503c](https://github.com/salesforce/sfdx-plugin-lwc-test/commit/6dd503c6f25bd53fbaa12a0023be226c8dae1124))
+
+
+
 # [1.2.0](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.1.1...1.2.0) (2024-03-05)
 
 
