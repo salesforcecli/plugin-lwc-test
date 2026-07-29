@@ -6,8 +6,8 @@
   "dependencies": {
     "@oclif/core": "^1.16.0",
     "@salesforce/command": "^5.2.6",
-    "@salesforce/core": "^3.26.2",
-    "@salesforce/kit": "^1.6.0",
+    "@salesforce/core": "^9.0.0",
+    "@salesforce/kit": "^4.0.0",
     "semver-compare": "^1.0.0",
     "signal-exit": "^3.0.6",
     "tslib": "^2.3.1"
@@ -22,7 +22,7 @@
     "@salesforce/plugin-command-reference": "^1.4.0",
     "@salesforce/prettier-config": "^0.0.2",
     "@salesforce/ts-sinon": "^1.3.20",
-    "@salesforce/ts-types": "^1.5.19",
+    "@salesforce/ts-types": "^3.0.0",
     "@types/node": "^18.7.14",
     "@types/semver-compare": "^1.0.1",
     "@types/shelljs": "^0.8.11",
@@ -51,7 +51,7 @@
     "typescript": "^4.8.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=22.0.0"
   },
   "files": [
     "/lib",
