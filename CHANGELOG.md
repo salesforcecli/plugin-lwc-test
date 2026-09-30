@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.2.1...1.2.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* **deps:** bump @babel/core from 7.18.13 to 7.29.7 ([#287](https://github.com/salesforce/sfdx-plugin-lwc-test/issues/287)) ([2025b89](https://github.com/salesforce/sfdx-plugin-lwc-test/commit/2025b89a3233eac70114cfbe24d1294281cafd56))
+
+
+
 ## [1.2.1](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.2.0...1.2.1) (2024-10-04)
 
 
