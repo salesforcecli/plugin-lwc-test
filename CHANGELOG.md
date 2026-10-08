@@ -1,3 +1,12 @@
+## [1.2.3](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.2.2...1.2.3) (2026-10-08)
+
+
+### Bug Fixes
+
+* **deps:** bump form-data from 4.0.0 to 4.0.6 ([#285](https://github.com/salesforce/sfdx-plugin-lwc-test/issues/285)) ([eb866f7](https://github.com/salesforce/sfdx-plugin-lwc-test/commit/eb866f7988e3eae5cc3267fe7cd798324dd70677))
+
+
+
 ## [1.2.2](https://github.com/salesforce/sfdx-plugin-lwc-test/compare/1.2.1...1.2.2) (2026-09-30)
 
 
