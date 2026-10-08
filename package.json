@@ -93,7 +93,7 @@
       "@salesforce/plugin-command-reference"
     ]
   },
-  "repository": "salesforce/sfdx-plugin-lwc-test",
+  "repository": "salesforcecli/plugin-lwc-test",
   "scripts": {
     "build": "sf-build",
     "check-license-headers": "node ./scripts/checkLicenseHeaders.js",
