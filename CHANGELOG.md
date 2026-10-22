@@ -1,3 +1,12 @@
+## [1.2.6](https://github.com/salesforcecli/plugin-lwc-test/compare/1.2.5...1.2.6) (2026-10-22)
+
+
+### Bug Fixes
+
+* **deps:** bump lodash from 4.17.21 to 4.18.1 ([#272](https://github.com/salesforcecli/plugin-lwc-test/issues/272)) ([4882cd8](https://github.com/salesforcecli/plugin-lwc-test/commit/4882cd843e6dfb160ad1d7077bed4d9da6cf6a59))
+
+
+
 ## [1.2.5](https://github.com/salesforcecli/plugin-lwc-test/compare/1.2.4...1.2.5) (2026-10-22)
 
 
