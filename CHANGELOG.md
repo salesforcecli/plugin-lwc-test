@@ -1,3 +1,12 @@
+## [1.2.5](https://github.com/salesforcecli/plugin-lwc-test/compare/1.2.4...1.2.5) (2026-10-22)
+
+
+### Bug Fixes
+
+* **deps:** bump shell-quote from 1.7.3 to 1.8.4 ([#283](https://github.com/salesforcecli/plugin-lwc-test/issues/283)) ([408e9e6](https://github.com/salesforcecli/plugin-lwc-test/commit/408e9e67aaa6c36882a9ea3ac0a37ac59469e96f))
+
+
+
 ## [1.2.4](https://github.com/salesforcecli/plugin-lwc-test/compare/1.2.3...1.2.4) (2026-10-08)
 
 
